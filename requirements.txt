@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+mistralai
+python-dotenv
+python-multipart
+pymupdf
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+filetype
+requests
+jinja2

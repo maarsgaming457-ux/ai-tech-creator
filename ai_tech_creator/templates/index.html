@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tech Creator - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% if launch_mode %}
+    <div class="launch-banner">
+        🚀 LAUNCH MODE ACTIVE: Welcome to the private beta! We are tracking bugs and taking feedback.
+    </div>
+    {% endif %}
+
+    <!-- Onboarding Modal -->
+    <div id="onboardingModal" class="modal hidden">
+        <div class="modal-content card">
+            <h2>Welcome to AI Tech Creator! 🚀</h2>
+            <p class="subtext mb-2">Let's set up your AI Personal Branding Coach.</p>
+            
+            <div class="form-group mb-2">
+                <label>What's your primary goal?</label>
+                <select id="onboardGoal" class="input-select w-full">
+                    <option value="Audience Growth">Build an Audience</option>
+                    <option value="Job Search">Find a Job / Recruiters</option>
+                    <option value="Networking">Networking & Authority</option>
+                </select>
+            </div>
+            
+            <div class="form-group mb-2">
+                <label>Your Niche / Industry</label>
+                <input type="text" id="onboardNiche" class="input-text w-full" placeholder="e.g. Frontend Dev, AI, Startups">
+            </div>
+
+            <button id="completeOnboardBtn" class="btn-primary w-full justify-center mt-2">Start Growing</button>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal hidden">
+        <div class="modal-content card center-text">
+            <h2>Was this post useful?</h2>
+            <p class="subtext mb-2">Help us improve our AI generation quality.</p>
+            <div class="flex-gap-1 mb-2 justify-center">
+                <button id="feedbackYesBtn" class="btn-success">👍 Yes</button>
+                <button id="feedbackNoBtn" class="btn-danger">👎 No</button>
+            </div>
+            <div id="feedbackTextSection" class="hidden">
+                <textarea id="feedbackComment" class="input-text w-full mb-2" rows="2" placeholder="Tell us what you liked/disliked..."></textarea>
+                <button id="submitFeedbackBtn" class="btn-primary w-full justify-center">Submit Feedback</button>
+            </div>
+            <button id="skipFeedbackBtn" class="btn-secondary w-full justify-center mt-2">Skip</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">✨</span>
+                <h1>AI Tech Creator</h1>
+            </div>
+            <div class="header-actions">
+                <select id="categorySelect" class="input-select">
+                    <option value="AI trends">AI trends</option>
+                    <option value="Startup insights">Startup insights</option>
+                    <option value="System design failures">System design failures</option>
+                    <option value="Career growth">Career growth</option>
+                </select>
+                <button id="clearBtn" class="btn-secondary hidden">Clear</button>
+                <a href="{{ url_for('logout') }}" class="btn-secondary no-underline">Logout</a>
+            </div>
+        </header>
+
+        <div id="toast" class="toast hidden">Success message</div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button id="qaGenerateBtn" class="btn-primary w-full justify-center">1. Generate First Post</button>
+            <button id="qaCopyBtn" class="btn-secondary w-full justify-center">2. Copy & Post to LinkedIn</button>
+            <button id="qaAutoBtn" class="btn-secondary w-full justify-center">3. Start Auto Mode</button>
+        </div>
+
+        <div class="main-layout">
+            <!-- LEFT COLUMN: GENERATE & OUTPUT -->
+            <main class="left-column">
+                <div class="card p-card mb-2">
+                    <div class="card-body">
+                        <button id="generateBtn" class="btn-primary w-full justify-center generate-cta">
+                            <span class="btn-text">🚀 Generate Viral Post</span>
+                            <span class="loader hidden"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="emptyState" class="empty-state card">
+                    <div class="empty-icon">🚀</div>
+                    <h2>Welcome to the Growth Engine</h2>
+                    <p class="mb-2">Click 'Generate Post' above to get started.</p>
+                    <div class="growth-guide">
+                        <h4>💡 Growth Guide</h4>
+                        <ol>
+                            <li><strong>Step 1:</strong> Generate your daily post.</li>
+                            <li><strong>Step 2:</strong> Copy and post it on LinkedIn.</li>
+                            <li><strong>Step 3:</strong> Respond to comments using our AI Reply tool.</li>
+                            <li><strong>Step 4:</strong> Come back tomorrow. Consistency beats quality!</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div id="resultCard" class="card hidden">
+                    <div class="card-header">
+                        <span id="topicBadge" class="badge topic-badge">Topic</span>
+                        <div class="header-right">
+                            <button id="exportLinkedinBtn" class="btn-linkedin">🔗 Export to LinkedIn</button>
+                            <button id="copyBtn" class="icon-btn">📋 Copy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="post-content">
+                        <!-- Prediction -->
+                        <div class="prediction-box mb-2">
+                            <span class="pred-label">Predicted Engagement:</span>
+                            <span id="engScoreBadge" class="badge">High</span>
+                            <div id="engReason" class="pred-reason">Strong hook and highly relatable topic.</div>
+                        </div>
+
+                        <!-- Fallback Warning -->
+                        <div id="fallbackWarning" class="fallback-warning hidden">
+                            ⚠️ Generated using fallback (API Error)
+                        </div>
+
+                        <div class="section">
+                            <h3>Generated Post</h3>
+                            <div class="post-hint">✨ This is what you can post today!</div>
+                            <div id="postText" class="text-box post-text-scrollable"></div>
+                        </div>
+                        
+                        <div class="section rationale-section">
+                            <h3>AI Rationale (Hook Optimizer)</h3>
+                            <div id="rationaleText" class="text-box secondary"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggestions & Tools -->
+                <div class="grid-2col">
+                    <div class="card p-card">
+                        <div class="card-header">
+                            <h3>Content Series Generator</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="subtext mb-2">Build a loyal audience with a daily series.</p>
+                            <select id="seriesTopic" class="input-select w-full mb-2">
+                                <option value="Day 1 of building my AI startup in public">Day 1 of building my AI startup in public</option>
+                                <option value="System Design Series: Let's talk about Caching">System Design Series: Caching</option>
+                                <option value="Hard truths about scaling Engineering teams">Scaling Engineering Teams</option>
+                            </select>
+                            <button id="genSeriesBtn" class="btn-primary w-full justify-center">Generate Series Post</button>
+                        </div>
+                    </div>
+
+                    <div class="card p-card">
+                        <div class="card-header">
+                            <h3>Comment Reply AI</h3>
+                        </div>
+                        <div class="card-body">
+                            <textarea id="commentInput" class="input-text mb-2 w-full" rows="2" placeholder="Paste a comment from LinkedIn here..."></textarea>
+                            <button id="replyAiBtn" class="btn-secondary w-full justify-center">Generate Smart Reply</button>
+                            <div id="replyResult" class="reply-result hidden mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- RIGHT COLUMN: STATS, AGENT & HISTORY -->
+            <aside class="right-column">
+                
+                <!-- User Stats Panel -->
+                <div class="stats-panel card p-card mb-2">
+                    <div class="card-header">
+                        <h3>Your Performance</h3>
+                    </div>
+                    <div class="card-body grid-2col">
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span id="levelText" class="stat-value text-accent">Beginner</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Points</span>
+                            <span id="pointsText" class="stat-value">0 XP</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Daily Posts</span>
+                            <span id="postsTodayText" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Active Streak 🔥</span>
+                            <span id="streakText" class="stat-value">0 days</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Autonomous Agent Dashboard -->
+                <div class="card auto-mode-card p-card mb-2">
+                    <div class="auto-mode-header">
+                        <div class="auto-mode-title">
+                            <h3>Autonomous AI Agent</h3>
+                            <div class="status-indicator">
+                                <span id="autoStatusDot" class="status-dot"></span>
+                                <span id="autoStatusText">OFF</span>
+                            </div>
+                        </div>
+                        <div class="auto-mode-actions mt-2">
+                            <button id="startAutoBtn" class="btn-success w-full justify-center">▶ Start Agent</button>
+                            <button id="stopAutoBtn" class="btn-danger w-full justify-center hidden">⏹ Stop Agent</button>
+                        </div>
+                    </div>
+                    <div class="auto-mode-body p-2">
+                        <div class="info-block mb-1">
+                            <span class="info-label">Last Agent Run:</span>
+                            <span id="lastRunText" class="info-value">Never</span>
+                        </div>
+                        <div class="info-block mb-1">
+                            <span class="info-label">Next Generation:</span>
+                            <span id="nextRunText" class="info-value">-</span>
+                        </div>
+                        <div class="info-block">
+                            <span class="info-label">AI Strategy Engine:</span>
+                            <span class="info-value text-sm text-accent">🧠 Analyzing past engagement to auto-schedule viral posts.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card history-card p-card">
+                    <div class="card-header history-header">
+                        <h3>Recent Agent Posts</h3>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <!-- History items populated via JS -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

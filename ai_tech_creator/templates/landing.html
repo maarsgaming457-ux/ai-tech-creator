@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tech Creator - Grow on LinkedIn using AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background-color: var(--bg-card);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin: 1rem 0;
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">
+            <span class="logo-icon">✨</span>
+            <h1 style="font-size:1.25rem;">AI Tech Creator</h1>
+        </div>
+        <div>
+            <a href="{{ url_for('login') }}" class="btn-secondary" style="text-decoration:none; margin-right: 1rem;">Login</a>
+            <a href="{{ url_for('signup') }}" class="btn-primary" style="text-decoration:none; display:inline-flex;">Get Started Free</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Grow on LinkedIn using AI</h1>
+        <p>The first autonomous AI agent that generates viral engineering posts, optimizes hooks, and posts for you.</p>
+        <a href="{{ url_for('signup') }}" class="btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem; display:inline-flex;">Start Growing Free</a>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div style="font-size: 2.5rem;">🧠</div>
+            <h3>AI Writing Coach</h3>
+            <p>Define your personal brand, tone, and niche. The AI writes in your unique voice.</p>
+        </div>
+        <div class="feature-card">
+            <div style="font-size: 2.5rem;">🤖</div>
+            <h3>Autonomous Agent</h3>
+            <p>Our AI analyzes past performance and automatically generates your daily post.</p>
+        </div>
+        <div class="feature-card">
+            <div style="font-size: 2.5rem;">📈</div>
+            <h3>Growth System</h3>
+            <p>Predicts engagement before you post, optimizes your hooks, and auto-replies to comments.</p>
+        </div>
+    </div>
+</body>
+</html>
