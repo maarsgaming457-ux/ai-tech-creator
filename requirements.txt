@@ -10,3 +10,4 @@ bcrypt
 filetype
 requests
 jinja2
+gunicorn
