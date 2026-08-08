@@ -11,3 +11,4 @@ filetype
 requests
 jinja2
 gunicorn
+pydantic[email]
