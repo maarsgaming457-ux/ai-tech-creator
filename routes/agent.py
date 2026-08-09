@@ -1,4 +1,5 @@
 import os
+import codecs
 import asyncio
 import time
 import uuid
@@ -258,7 +259,10 @@ Hands-on projects are key to mastering this field.
 The future of {topic} holds immense opportunities."""
         
     # FIX NEWLINES
-    content = content.replace("\\n", "\n")
+    try:
+        content = codecs.decode(content, "unicode_escape")
+    except Exception:
+        pass
     content = content.replace("\r", "").strip()
 
     # REMOVE unwanted prefixes like [Twitter]

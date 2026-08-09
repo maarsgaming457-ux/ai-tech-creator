@@ -75,9 +75,9 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
         </div>
       </div>
 
-      <div className="mb-4 text-slate-200 text-[15px] leading-[1.7] whitespace-pre-line">
+      <div className="mb-4 text-[#e5e7eb] text-[15px] leading-[1.8] post-content">
         {lines.map((line, i) => (
-          <p key={i} className={line.trim().startsWith("#") ? "text-purple-400 font-medium mt-2" : ""}>
+          <p key={i} className={line.trim().startsWith("#") ? "text-purple-400 font-semibold" : "mb-2"}>
             {line}
           </p>
         ))}
