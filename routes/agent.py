@@ -4,6 +4,7 @@ import uuid
 import random
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
+from ai_tech_creator.post_generator import generate_post
 
 router = APIRouter(tags=["agent"])
 
@@ -16,116 +17,78 @@ CURRENT_TOPIC = "AI Trends"
 class InitRequest(BaseModel):
     topic: str = "AI Trends"
 
-# Mock topic generation dictionary for the agent
-POTENTIAL_TOPICS = [
-    "The Future of AGI",
-    "FastAPI vs Node.js for AI startups",
-    "Why fine-tuning is better than RAG",
-    "Open Source LLMs catching up to GPT-4",
-    "How glassmorphism improves SaaS UX",
-    "React Server Components explained",
-    "The death of the junior developer?",
-    "Why you should use Cursor IDE",
-    "Prompt Engineering is a fading skill",
-    "Deploying AI models on Render vs Vercel"
-]
-
 def topic_discovery():
     """Discover a new topic based on CURRENT_TOPIC."""
     global CURRENT_TOPIC
-    
-    # Create slight variations to keep the feed fresh even on the same base topic
-    variations = [
-        f"The Future of {CURRENT_TOPIC}",
-        f"Why {CURRENT_TOPIC} is shifting the industry",
-        f"Unexpected trends in {CURRENT_TOPIC}",
-        f"How developers are adopting {CURRENT_TOPIC}",
-        f"The hidden reality of {CURRENT_TOPIC}",
-        f"{CURRENT_TOPIC} and the next generation of SaaS",
-        f"Mastering {CURRENT_TOPIC} in 2024"
-    ]
-    
-    available = [t for t in variations if t not in TOPICS_SEEN]
-    if not available:
-        return f"{CURRENT_TOPIC} deep dive #{random.randint(100, 999)}"
-        
-    return random.choice(available)
+    return CURRENT_TOPIC
 
 def editorial_filtering(topic):
     """Filter out bad topics (simulated)."""
-    # For now, all topics pass the filter
     return True
 
-def post_generation(topic):
-    """Generate a structured 6-line post based on the topic."""
+async def post_generation(topic):
+    """Generate a structured 6-line post based on the topic using Mistral."""
     
-    hooks = [
-        f"Everything you thought you knew about {topic} is about to change. 🚀",
-        f"The data is in, and {topic} is growing faster than anyone predicted. 📈",
-        f"Are we looking at the end of traditional workflows with {topic}? 💡",
-        f"I've been analyzing {topic} all week, and the results are staggering. 🔥"
-    ]
-    
-    insights = [
-        "What most people miss is how rapidly the underlying architecture is evolving.",
-        "The real bottleneck isn't the technology itself, but how we adapt our systems.",
-        "Early adopters are already seeing massive efficiency gains by leveraging this.",
-        "We are shifting from manual configurations to entirely autonomous loops."
-    ]
-    
-    explanations = [
-        "This works by connecting real-time data streams directly into decision engines without human latency.",
-        "By decentralizing the core logic, the system scales infinitely with minimal overhead.",
-        "The underlying framework dynamically adjusts parameters based on live feedback loops.",
-        "It effectively bridges the gap between raw data processing and intelligent output generation."
-    ]
-    
-    trends = [
-        "In the next 6 months, expect this to become the baseline standard for all SaaS products.",
-        "Companies ignoring this shift will struggle to compete on speed and cost.",
-        "This is no longer a fringe experiment; it's a core production requirement.",
-        "We are entering an era where software writes itself and adapts on the fly."
-    ]
-    
-    questions = [
-        "How is your team preparing for this shift?",
-        "What's your biggest concern with adopting this?",
-        "Are you currently building with this in your stack?",
-        "What do you think is the next logical step here?"
-    ]
-    
-    hashtags = "#AI #Tech #SaaS #Innovation #Future"
+    prompt = f"""Generate a LinkedIn-style post STRICTLY about: "{topic}"
+
+STRICT RULES:
+- DO NOT change the topic
+- DO NOT default to AI unless topic is AI
+- Content must clearly reflect the given topic
+
+FORMAT REQUIREMENTS:
+- Write EXACTLY 5 to 6 lines
+- Minimum 120–150 words
+- Each line must be separated using \\n
+- DO NOT write in one paragraph
+- DO NOT return a single sentence
+
+STRUCTURE:
+1. Hook (engaging first line)
+2. Insight or trend
+3. Explanation
+4. Practical value
+5. Question to engage audience
+6. 3–4 hashtags relevant to topic
+
+Example output format:
+🚀 First line...
+Second line...
+Third line...
+Fourth line...
+What do you think?
+#tag1 #tag2 #tag3
+"""
     
     content = ""
     while True:
-        # Assemble the 6 lines
-        lines = [
-            random.choice(hooks),
-            random.choice(insights),
-            random.choice(explanations),
-            random.choice(trends),
-            random.choice(questions),
-            hashtags
-        ]
-        
-        # Use single newlines to strictly force multi-line structure
-        content = "\n".join(lines)
-        
-        # Reject response if length < 100 words
-        if len(content.split()) >= 100:
-            break
+        try:
+            # We use asyncio.to_thread because generate_post uses synchronous requests
+            result = await asyncio.to_thread(generate_post, prompt)
             
-        # If it's too short, we'll append more text to the explanation to force it over 100 words
-        # (This simulates regenerating until valid)
-        explanations.append(explanations[0] + " " + explanations[1] + " " + explanations[2] + " This ensures we are always delivering comprehensive, in-depth analysis that spans multiple sentences and provides maximum value to the reader. Deep technical execution requires deep context.")
-    
+            if isinstance(result, dict) and not result.get("success"):
+                print("LLM Error:", result.get("error"))
+                await asyncio.sleep(5)
+                continue
+                
+            content = result
+            
+            # Reject if length < 100 words
+            if len(content.split()) >= 100:
+                break
+                
+            print("Post too short, regenerating...")
+        except Exception as e:
+            print("Error generating post:", str(e))
+            await asyncio.sleep(5)
+            
     post = {
         "id": str(uuid.uuid4()),
         "createdAt": time.time(),
         "topic": topic,
         "text": content,
-        "rationale": "High engagement probability based on recent Twitter/LinkedIn trends.",
-        "sources": ["Simulated Web Search", "Twitter Trends"]
+        "rationale": "High engagement probability based on real-time LLM analysis.",
+        "sources": ["LLM Generation", "Domain Trends"]
     }
     return post
 
@@ -143,7 +106,7 @@ async def agent_loop():
             TOPICS_SEEN.add(topic)
             
             # 3. Generate Post
-            post = post_generation(topic)
+            post = await post_generation(topic)
             
             # Insert at the beginning so the feed is reverse-chronological
             AGENT_POSTS.insert(0, post)
@@ -161,8 +124,12 @@ async def init_agent(req: InitRequest, background_tasks: BackgroundTasks):
     global IS_AGENT_RUNNING, CURRENT_TOPIC
     
     # Update topic if provided (otherwise defaults to "AI Trends")
-    if req.topic.strip():
-        CURRENT_TOPIC = req.topic.strip()
+    received_topic = req.topic.strip() if req.topic else ""
+    if not received_topic:
+        received_topic = "AI Trends"
+        
+    CURRENT_TOPIC = received_topic
+    print("Topic received:", CURRENT_TOPIC)
     
     if IS_AGENT_RUNNING:
         return {"success": True, "message": f"Agent is already running. Topic updated to: {CURRENT_TOPIC}"}
