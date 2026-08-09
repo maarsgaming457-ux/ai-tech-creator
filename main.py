@@ -21,7 +21,7 @@ app = FastAPI(title="AI Tech Creator (Production Ready)")
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://ai-tech-creator-1.vercel.app"
+    "https://ai-tech-creator.vercel.app"
 ]
 
 app.add_middleware(
