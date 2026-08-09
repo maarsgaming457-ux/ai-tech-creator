@@ -37,7 +37,7 @@ export default function FeedCard({ post }) {
       {/* Main Content */}
       <div className="prose prose-invert max-w-none mb-6">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {post.text}
+          {post.content || post.text}
         </ReactMarkdown>
       </div>
 

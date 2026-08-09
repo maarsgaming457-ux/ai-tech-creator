@@ -8,6 +8,7 @@ export default function Feed() {
   const [agentId, setAgentId] = useState(null);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState('');
   
@@ -34,22 +35,37 @@ export default function Feed() {
       // Fetch immediately once running
       const fetchFeed = async () => {
         try {
-          const data = await fetchAgentFeed(agentId);
-          if (data && data.success && data.posts) {
-            setPosts(prev => {
-              const existingIds = new Set(prev.map(p => p.id));
-              const newPosts = data.posts.filter(p => !existingIds.has(p.id));
-              
-              const merged = [...newPosts, ...prev];
-              
-              // Backend createdAt is a unix timestamp in seconds
-              return merged.sort(
-                (a, b) => new Date(b.createdAt * 1000) - new Date(a.createdAt * 1000)
-              ).slice(0, 50);
-            });
+          const result = await fetchAgentFeed(agentId);
+          console.log("API RESPONSE:", result);
+          
+          if (!result || !result.success) {
+            throw new Error("API returned failure");
           }
+          
+          const data = result.posts || [];
+          console.log("POSTS ARRAY:", data);
+          
+          setPosts(prev => {
+            const existingIds = new Set(prev.map(p => p.id));
+            
+            // Validate data structure and prevent crashes
+            const newPosts = data.map(p => ({
+              ...p,
+              id: p.id || `temp-${Date.now()}-${Math.random()}`,
+              content: p.content || p.text || "",
+              createdAt: p.createdAt || (Date.now() / 1000)
+            })).filter(p => !existingIds.has(p.id));
+            
+            const merged = [...newPosts, ...prev];
+            
+            return merged.sort(
+              (a, b) => new Date(b.createdAt * 1000) - new Date(a.createdAt * 1000)
+            ).slice(0, 50);
+          });
         } catch (err) {
-          console.error("Failed to fetch agent feed:", err);
+          console.error("FEED ERROR:", err);
+        } finally {
+          setLoading(false);
         }
       };
       
@@ -109,13 +125,7 @@ export default function Feed() {
               </div>
             </div>
             
-            <AnimatePresence mode="popLayout">
-              {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-            </AnimatePresence>
-            
-            {posts.length === 0 && (
+            {loading ? (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -125,10 +135,30 @@ export default function Feed() {
                   <Sparkles className="w-6 h-6 text-purple-400 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-slate-200 font-semibold text-lg mb-1">Agent is thinking...</h3>
-                  <p className="text-slate-500 text-sm">Synthesizing trends and preparing the first post.</p>
+                  <h3 className="text-slate-200 font-semibold text-lg mb-1">Loading feed...</h3>
+                  <p className="text-slate-500 text-sm">Synthesizing trends and preparing posts.</p>
                 </div>
               </motion.div>
+            ) : posts.length === 0 ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col items-center justify-center py-20 text-center gap-4"
+              >
+                <div className="w-12 h-12 rounded-full border border-purple-500/30 bg-purple-600/10 flex items-center justify-center">
+                  <Activity className="w-6 h-6 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-slate-200 font-semibold text-lg mb-1">No posts available</h3>
+                  <p className="text-slate-500 text-sm">Agent is thinking...</p>
+                </div>
+              </motion.div>
+            ) : (
+              <AnimatePresence mode="popLayout">
+                {posts.map(post => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </AnimatePresence>
             )}
             
           </div>
