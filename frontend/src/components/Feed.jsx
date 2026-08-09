@@ -45,7 +45,7 @@ export default function Feed() {
               // Backend createdAt is a unix timestamp in seconds
               return merged.sort(
                 (a, b) => new Date(b.createdAt * 1000) - new Date(a.createdAt * 1000)
-              );
+              ).slice(0, 50);
             });
           }
         } catch (err) {
