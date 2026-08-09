@@ -21,7 +21,7 @@ export default function Feed() {
       setIsAgentRunning(true);
     } catch (err) {
       console.error(err);
-      setError('Failed to awaken agent. Check backend connection.');
+      setError('❌ Failed to connect to backend. Check server.');
     } finally {
       setIsInitializing(false);
     }
