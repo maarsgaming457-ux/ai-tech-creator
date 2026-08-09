@@ -15,6 +15,23 @@ function getRelativeTime(timestampInSeconds) {
 
 export default function PostCard({ post, regeneratePost, isRegenerating }) {
   const timeString = getRelativeTime(post.createdAt);
+  
+  const contentText = post.post || post.content || "";
+  const lines = contentText.split('\n');
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+  };
+
+  const shareLinkedIn = (text) => {
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  };
+
+  const shareTwitter = (text) => {
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <motion.div 
@@ -58,10 +75,34 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
         </div>
       </div>
 
-      <div className="mb-4 text-slate-200 text-base leading-[1.7]">
-        <div className="post-text">
-          {post.post}
-        </div>
+      <div className="mb-4 text-slate-200 text-[15px] leading-[1.7] whitespace-pre-line">
+        {lines.map((line, i) => (
+          <p key={i} className={line.trim().startsWith("#") ? "text-purple-400 font-medium mt-2" : ""}>
+            {line}
+          </p>
+        ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-3 mt-4">
+        <button 
+          onClick={() => copyToClipboard(contentText)}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-md text-xs font-medium border border-white/10 transition-colors"
+        >
+          📋 Copy
+        </button>
+        <button 
+          onClick={() => shareLinkedIn(contentText)}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0077b5]/10 hover:bg-[#0077b5]/20 text-[#0a66c2] hover:text-[#0077b5] dark:text-[#70b5f9] dark:hover:text-blue-400 rounded-md text-xs font-medium border border-[#0077b5]/20 transition-colors"
+        >
+          🔗 LinkedIn
+        </button>
+        <button 
+          onClick={() => shareTwitter(contentText)}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1da1f2]/10 hover:bg-[#1da1f2]/20 text-[#1da1f2] hover:text-[#1a91da] rounded-md text-xs font-medium border border-[#1da1f2]/20 transition-colors"
+        >
+          🐦 Twitter
+        </button>
       </div>
 
       {/* Dynamic Tags */}

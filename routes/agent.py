@@ -113,36 +113,35 @@ async def post_generation(topic):
     context = get_latest_context(topic) + f"\\nVariation seed: {random.randint(1,100000)}"
     
     prompt = f"""
-You are a viral content creator for LinkedIn and social media.
+Act as a viral LinkedIn content creator.
 
-========================================
-🎯 GOAL
-========================================
-Generate HIGH-QUALITY viral posts with:
-- 5 to 7 SHORT lines
-- Each line separated properly (real newline, not \\n)
-- Strong hook in first line
-- Easy readable format
-- Professional + engaging tone
+Write a post about {topic}
 
-========================================
-🧠 CONTENT STRUCTURE (MANDATORY)
-========================================
-Line 1 → Hook (attention grabbing)
-Line 2 → Insight / trend
-Line 3 → Real-world relevance
-Line 4 → Advice or takeaway
-Line 5 → Future / opportunity
-(Optional Line 6–7 → Bonus insight)
+Rules:
+- 5 to 7 lines
+- Each line MUST be on a new line
+- Add emoji at start of each line (optional but preferred)
+- Short lines only
+- No paragraph
+- No \\n text
+- Clean spacing
 
-========================================
-📌 FORMAT RULES (VERY IMPORTANT)
-========================================
-- DO NOT return single paragraph
-- DO NOT use "\\n"
-- Use REAL line breaks
-- Each sentence MUST be on a new line
-- Keep each line short (max 12–15 words)
+Add 4-6 relevant hashtags at end (new line)
+
+Example:
+
+🚀 AI is evolving faster than ever.
+
+🔥 Industries are being reshaped daily.
+📈 Skills matter more than degrees.
+💡 Practical knowledge wins.
+
+🌍 The future belongs to builders.
+
+#AI #Technology #Innovation #Future
+
+Return ONLY final post.
+
 
 ========================================
 LATEST REAL-WORLD INFORMATION
@@ -258,10 +257,18 @@ Students and professionals must focus on practical skills.
 Hands-on projects are key to mastering this field.
 The future of {topic} holds immense opportunities."""
         
+    # FIX NEWLINES
+    content = content.replace("\\n", "\n")
+    content = content.replace("\r", "").strip()
+
+    # REMOVE unwanted prefixes like [Twitter]
+    if content.startswith("["):
+        content = content.split("]", 1)[-1].strip()
+
     print("FINAL TOPIC:", topic)
     print("FINAL POST:", content)
     
-    post_text = f"[{chosen_platform}]\\n\\n{content.strip()}"
+    post_text = content.strip()
     
     post = {
         "id": str(uuid.uuid4()),
