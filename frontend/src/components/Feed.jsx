@@ -3,7 +3,7 @@ import { Activity, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PostCard from './PostCard';
 
-export default function Feed({ posts, loading }) {
+export default function Feed({ posts, loading, regeneratePost, isRegenerating }) {
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex items-center gap-3 mb-2 pb-4 border-b border-white/10">
@@ -47,7 +47,12 @@ export default function Feed({ posts, loading }) {
       ) : (
         <AnimatePresence mode="popLayout">
           {posts.map(post => (
-            <PostCard key={post.id} post={post} />
+            <PostCard 
+              key={post.id} 
+              post={post} 
+              regeneratePost={regeneratePost}
+              isRegenerating={isRegenerating}
+            />
           ))}
         </AnimatePresence>
       )}

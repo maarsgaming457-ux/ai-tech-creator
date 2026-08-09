@@ -8,7 +8,7 @@ import { initAgent, fetchAgentFeed, stopAgent } from './lib/api';
 function App() {
   const [agentId, setAgentId] = useState(null);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [topic, setTopic] = useState("");
@@ -83,7 +83,7 @@ function App() {
 
   const handleRunAgent = async () => {
     try {
-      setIsInitializing(true);
+      setIsGenerating(true);
       const data = await initAgent(topic);
       setAgentId(data.agentId || 'ag-12345');
       setIsAgentRunning(true);
@@ -92,7 +92,46 @@ function App() {
       console.error(err);
       alert('Failed to connect to backend. Check server.');
     } finally {
-      setIsInitializing(false);
+      setIsGenerating(false);
+    }
+  };
+
+  const regeneratePost = async (targetTopic) => {
+    try {
+      setIsGenerating(true);
+      
+      const API = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${API}/api/agent/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: targetTopic })
+      });
+      const data = await res.json();
+      
+      const generateTags = (topicStr) => {
+        const safeTopic = topicStr || "technology";
+        return [
+          `#${safeTopic.replace(/\\s+/g, '')}`,
+          "#Innovation",
+          "#Career",
+          "#Technology"
+        ];
+      };
+
+      const newPost = {
+        id: `temp-${Date.now()}-${Math.random()}`,
+        topic: data.topic,
+        post: data.post,
+        tags: generateTags(data.topic),
+        createdAt: Date.now() / 1000
+      };
+
+      setPosts(prev => [newPost, ...prev]);
+
+    } catch (error) {
+      console.error("Regenerate error:", error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -113,7 +152,7 @@ function App() {
       <main className="w-full flex flex-col items-center px-4 pb-20">
         <Hero 
           onRunAgent={handleRunAgent} 
-          isInitializing={isInitializing}
+          isInitializing={isGenerating}
           topic={topic}
           setTopic={setTopic}
         />
@@ -123,7 +162,12 @@ function App() {
           
           {/* Left Column: Live Feed (Takes 8 columns on large screens) */}
           <div className="lg:col-span-8">
-            <Feed posts={posts} loading={loading && isAgentRunning} />
+            <Feed 
+              posts={posts} 
+              loading={loading && isAgentRunning} 
+              regeneratePost={regeneratePost}
+              isRegenerating={isGenerating}
+            />
           </div>
           
           {/* Right Column: Agent Control Panel (Takes 4 columns on large screens) */}

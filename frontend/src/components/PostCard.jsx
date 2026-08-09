@@ -13,7 +13,7 @@ function getRelativeTime(timestampInSeconds) {
   return rtf.format(-Math.round(secondsDifference / 86400), 'day');
 }
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, regeneratePost, isRegenerating }) {
   const timeString = getRelativeTime(post.createdAt);
 
   return (
@@ -42,9 +42,20 @@ export default function PostCard({ post }) {
             </div>
           </div>
         </div>
-        <button className="p-2 text-slate-500 hover:text-white transition-colors rounded-full hover:bg-white/5">
-          <MoreVertical className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button 
+            className="p-2 text-slate-500 hover:text-[#00ff9f] transition-colors rounded-full hover:bg-[#00ff9f]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => regeneratePost(post.topic)}
+            disabled={isRegenerating}
+            title="Regenerate this post"
+          >
+            <span className="sr-only">Regenerate</span>
+            🔄
+          </button>
+          <button className="p-2 text-slate-500 hover:text-white transition-colors rounded-full hover:bg-white/5">
+            <MoreVertical className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}

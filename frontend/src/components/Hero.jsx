@@ -39,23 +39,28 @@ export default function Hero({ onRunAgent, isInitializing, topic, setTopic }) {
               />
             </div>
             
-            <div className="flex flex-wrap items-center gap-4">
-              <button
-                onClick={onRunAgent}
-                disabled={isInitializing}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#00ff9f] to-emerald-400 hover:from-[#00e68f] hover:to-emerald-500 text-slate-900 font-bold transition-all shadow-[0_0_20px_rgba(0,255,159,0.3)] hover:shadow-[0_0_30px_rgba(0,255,159,0.5)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
-              >
-                <Zap className="w-5 h-5" />
-                <span>{isInitializing ? 'Initializing...' : 'Run Agent'}</span>
-              </button>
-            
-            <button
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:border-white/20"
-            >
-              <Eye className="w-5 h-5 text-slate-300" />
-              <span>View Feed</span>
-            </button>
-          </div>
+            <div className="flex flex-col">
+              <div className="flex flex-wrap items-center gap-4">
+                <button
+                  onClick={onRunAgent}
+                  disabled={isInitializing}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#00ff9f] to-emerald-400 hover:from-[#00e68f] hover:to-emerald-500 text-slate-900 font-bold transition-all shadow-[0_0_20px_rgba(0,255,159,0.3)] hover:shadow-[0_0_30px_rgba(0,255,159,0.5)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+                >
+                  <Zap className="w-5 h-5" />
+                  <span>{isInitializing ? 'Generating...' : 'Run Agent'}</span>
+                </button>
+              
+                <button
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:border-white/20"
+                >
+                  <Eye className="w-5 h-5 text-slate-300" />
+                  <span>View Feed</span>
+                </button>
+              </div>
+              {isInitializing && (
+                <p className="loading-text text-sm font-medium text-[#00ff9f] mt-3">⚡ Generating post...</p>
+              )}
+            </div>
           </div>
         </div>
 

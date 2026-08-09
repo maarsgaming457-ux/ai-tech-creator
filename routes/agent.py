@@ -162,3 +162,13 @@ async def stop_agent():
     global IS_AGENT_RUNNING
     IS_AGENT_RUNNING = False
     return {"success": True, "message": "Autonomous Agent stopped."}
+
+@router.post("/agent/generate")
+async def manual_generate(req: InitRequest):
+    topic = req.topic.strip() if req.topic else "technology"
+    post = await post_generation(topic)
+    return {
+        "success": True,
+        "post": post["post"],
+        "topic": post["topic"]
+    }
