@@ -41,9 +41,20 @@ export default function ChatLayout() {
       // In ChatGPT style, we just pass the prompt. We'll map it to the expected schema.
       const data = await generatePost(input);
       
-      let aiContent = data.message || "Generated successfully";
+      // The robust AI content extraction algorithm
+      let aiContent = 
+        data.response || 
+        data.answer || 
+        data.result || 
+        data.message || 
+        (typeof data === "string" ? data : JSON.stringify(data, null, 2));
+      
       // Optional Improvement: prefix
-      aiContent = aiContent.replace("Generated content for:", "🤖 AI:");
+      if (typeof aiContent === "string") {
+        aiContent = aiContent.replace("Generated content for:", "🤖 AI:");
+      }
+      
+      console.log("API FULL RESPONSE:", data);
       
       const botMsg = {
         role: "assistant",
@@ -53,7 +64,7 @@ export default function ChatLayout() {
       
       setMessages((prev) => [...prev, botMsg]);
     } catch (error) {
-      console.error(error);
+      console.error("API ERROR:", error);
       let errMsg = error.message || "An unexpected error occurred";
       if (errMsg.includes("Rate limit") || errMsg.includes("429")) {
         errMsg = "⏳ Please wait a few seconds before generating again";
