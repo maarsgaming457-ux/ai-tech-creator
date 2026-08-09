@@ -56,3 +56,16 @@ export const fetchAgentFeed = async (agentId) => {
     throw error;
   }
 };
+
+export const stopAgent = async () => {
+  try {
+    const res = await fetch(`${API}/api/agent/stop`, { method: "POST" });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const data = await res.json();
+    console.log("API RESPONSE:", data);
+    return data;
+  } catch (error) {
+    console.error("[AGENT STOP ERROR]", error);
+    throw error;
+  }
+};
