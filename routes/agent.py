@@ -15,12 +15,20 @@ IS_AGENT_RUNNING = False
 CURRENT_TOPIC = "technology"
 
 STYLES = [
-    "A compelling storytelling format sharing a personal or professional anecdote.",
-    "A strong, contrarian opinion challenging the status quo.",
-    "A data-driven, analytical perspective highlighting recent trends.",
-    "An actionable, step-by-step 'how-to' guide.",
-    "A highly thought-provoking question that sparks deep debate.",
-    "A visionary, futuristic prediction about where the industry is heading."
+    "storytelling - A compelling personal or professional anecdote.",
+    "opinion - A strong, contrarian opinion challenging the status quo.",
+    "educational - A highly actionable, step-by-step 'how-to' guide or framework.",
+    "motivational - An inspiring, mindset-shifting realization.",
+    "prediction - A visionary, futuristic prediction about where the industry is heading."
+]
+
+HOOKS = [
+    "Start with a controversial statement.",
+    "Start with a shocking statistic or fact.",
+    "Start with a raw, vulnerable admission.",
+    "Start with a counter-intuitive piece of advice.",
+    "Start with a direct question to the reader's pain points.",
+    "Start with an 'I used to believe X, until Y' statement."
 ]
 
 class InitRequest(BaseModel):
@@ -49,28 +57,30 @@ async def post_generation(topic):
     avoidance_context = "\\n".join([f"- {text[:100]}..." for text in recent_texts]) if recent_texts else "None"
     
     chosen_style = random.choice(STYLES)
+    chosen_hook = random.choice(HOOKS)
     
     prompt = f"""
-Write a high-quality LinkedIn-style post about: {topic}
+Write a HIGHLY VIRAL, scroll-stopping LinkedIn post about: {topic}
 
 Style to use for this specific post:
 {chosen_style}
 
+Hook strategy to use:
+{chosen_hook}
+
 CRITICAL INSTRUCTION TO PREVENT REPETITION:
 You MUST NOT generate a post that sounds similar to these recently generated posts:
 {avoidance_context}
-Your output must be completely unique, fresh, and use a different angle.
+Your output must be completely unique, fresh, and use a completely different angle.
 
 Requirements:
-- Focus strictly on the topic and the assigned style
-- A strong, attention-grabbing hook on the first line
-- Exactly 3 to 6 meaningful lines in total
-- Each line on a new line (use proper spacing)
-- Human-like tone (not robotic)
-- Professional and engaging
-- Include 5 to 8 highly relevant hashtags at the very end
-- No generic filler sentences
-- Add real-world relevance if possible
+- Focus strictly on the topic, style, and hook strategy.
+- Your first line must be an incredibly strong, punchy hook.
+- Exactly 3 to 6 meaningful body lines in total.
+- Each line on a new line (use proper spacing for readability).
+- Human-like tone (conversational, not robotic, no generic filler words).
+- Write like a top-tier LinkedIn creator.
+- Include 5 to 8 highly relevant hashtags at the very end.
 """
     
     content = ""
