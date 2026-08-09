@@ -22,6 +22,13 @@ def topic_discovery():
     global CURRENT_TOPIC
     return CURRENT_TOPIC
 
+def is_valid(post):
+    if not isinstance(post, str):
+        return False
+    lines = post.split("\n")
+    words = len(post.split())
+    return len(lines) >= 5 and words >= 120
+
 def editorial_filtering(topic):
     """Filter out bad topics (simulated)."""
     return True
@@ -29,39 +36,38 @@ def editorial_filtering(topic):
 async def post_generation(topic):
     """Generate a structured 6-line post based on the topic using Mistral."""
     
-    prompt = f"""Generate a LinkedIn-style post STRICTLY about: "{topic}"
+    prompt = f"""You are a strict content generator.
 
-STRICT RULES:
-- DO NOT change the topic
-- DO NOT default to AI unless topic is AI
-- Content must clearly reflect the given topic
+Generate a LinkedIn-style post ONLY about the topic: "{topic}"
 
-FORMAT REQUIREMENTS:
-- Write EXACTLY 5 to 6 lines
+CRITICAL RULES:
+- You MUST NOT change the topic
+- You MUST NOT talk about AI unless topic is AI
+- Stay 100% focused on the given topic
+- Use domain-specific language
+- The topic is NOT AI unless explicitly provided by the user
+
+FORMAT RULES (MANDATORY):
+- EXACTLY 5 to 6 lines
 - Minimum 120–150 words
-- Each line must be separated using \\n
-- DO NOT write in one paragraph
-- DO NOT return a single sentence
+- Each line MUST be separated using \\n
+- DO NOT write in a single paragraph
+- DO NOT return one sentence
 
 STRUCTURE:
-1. Hook (engaging first line)
-2. Insight or trend
+1. Hook
+2. Insight
 3. Explanation
-4. Practical value
-5. Question to engage audience
-6. 3–4 hashtags relevant to topic
+4. Value
+5. Question
+6. Hashtags (3–4)
 
-Example output format:
-🚀 First line...
-Second line...
-Third line...
-Fourth line...
-What do you think?
-#tag1 #tag2 #tag3
+If output does not follow rules, it is INVALID.
 """
     
     content = ""
-    while True:
+    attempts = 0
+    while attempts < 3:
         try:
             # We use asyncio.to_thread because generate_post uses synchronous requests
             result = await asyncio.to_thread(generate_post, prompt)
@@ -69,19 +75,24 @@ What do you think?
             if isinstance(result, dict) and not result.get("success"):
                 print("LLM Error:", result.get("error"))
                 await asyncio.sleep(5)
+                attempts += 1
                 continue
                 
             content = result
             
-            # Reject if length < 100 words
-            if len(content.split()) >= 100:
+            if is_valid(content):
                 break
                 
-            print("Post too short, regenerating...")
+            print("Regenerating invalid output...")
+            attempts += 1
         except Exception as e:
             print("Error generating post:", str(e))
             await asyncio.sleep(5)
+            attempts += 1
             
+    # Force line breaks failsafe if model ignores formatting
+    content = content.replace(". ", ".\\n")
+    
     post = {
         "id": str(uuid.uuid4()),
         "createdAt": time.time(),
@@ -129,7 +140,7 @@ async def init_agent(req: InitRequest, background_tasks: BackgroundTasks):
         received_topic = "AI Trends"
         
     CURRENT_TOPIC = received_topic
-    print("Topic received:", CURRENT_TOPIC)
+    print("FINAL TOPIC:", CURRENT_TOPIC)
     
     if IS_AGENT_RUNNING:
         return {"success": True, "message": f"Agent is already running. Topic updated to: {CURRENT_TOPIC}"}
