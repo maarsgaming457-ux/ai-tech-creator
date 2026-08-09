@@ -43,6 +43,8 @@ def generate_post(prompt):
 
     data = {
         "model": "mistral-small-latest",
+        "temperature": 0.9,
+        "top_p": 0.9,
         "messages": [
             {"role": "user", "content": prompt}
         ]

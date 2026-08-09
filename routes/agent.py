@@ -14,6 +14,15 @@ TOPICS_SEEN = set()
 IS_AGENT_RUNNING = False
 CURRENT_TOPIC = "technology"
 
+STYLES = [
+    "A compelling storytelling format sharing a personal or professional anecdote.",
+    "A strong, contrarian opinion challenging the status quo.",
+    "A data-driven, analytical perspective highlighting recent trends.",
+    "An actionable, step-by-step 'how-to' guide.",
+    "A highly thought-provoking question that sparks deep debate.",
+    "A visionary, futuristic prediction about where the industry is heading."
+]
+
 class InitRequest(BaseModel):
     topic: str = "technology"
 
@@ -36,16 +45,30 @@ def editorial_filtering(topic):
 async def post_generation(topic):
     """Generate a structured 6-line post based on the topic using Mistral."""
     
+    recent_texts = [p["post"] for p in AGENT_POSTS[:5]]
+    avoidance_context = "\\n".join([f"- {text[:100]}..." for text in recent_texts]) if recent_texts else "None"
+    
+    chosen_style = random.choice(STYLES)
+    
     prompt = f"""
 Write a high-quality LinkedIn-style post about: {topic}
 
+Style to use for this specific post:
+{chosen_style}
+
+CRITICAL INSTRUCTION TO PREVENT REPETITION:
+You MUST NOT generate a post that sounds similar to these recently generated posts:
+{avoidance_context}
+Your output must be completely unique, fresh, and use a different angle.
+
 Requirements:
-- Focus strictly on the topic
-- 5 to 6 meaningful lines
-- Each line on a new line
+- Focus strictly on the topic and the assigned style
+- A strong, attention-grabbing hook on the first line
+- Exactly 3 to 6 meaningful lines in total
+- Each line on a new line (use proper spacing)
 - Human-like tone (not robotic)
 - Professional and engaging
-- Include 3 to 4 relevant hashtags at the very end
+- Include 5 to 8 highly relevant hashtags at the very end
 - No generic filler sentences
 - Add real-world relevance if possible
 """
