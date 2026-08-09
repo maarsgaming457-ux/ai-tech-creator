@@ -44,7 +44,7 @@ templates = Jinja2Templates(directory="templates")
 # Startup event
 @app.on_event("startup")
 def on_startup():
-    print("🚀 Server starting...")
+    print("Server starting...")
     init_db()
 
 # Routers
@@ -55,11 +55,11 @@ app.include_router(agent_router, prefix="/api")
 app.include_router(background.router, prefix="/api")
 app.include_router(upload.router, prefix="/api")
 
-# Root route (serves frontend)
-# Root route (debug test)
-@app.get("/")
-def root():
-    return {"message": "Backend is running"}
+from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 # Health check
 @app.get("/ping")
