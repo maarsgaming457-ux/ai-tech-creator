@@ -41,12 +41,17 @@ export default function ChatLayout() {
       // In ChatGPT style, we just pass the prompt. We'll map it to the expected schema.
       const data = await generatePost(input);
       
+      if (data.success === false) {
+        throw new Error("API returned failure");
+      }
+      
       // The robust AI content extraction algorithm
       let aiContent = 
+        data.message || 
         data.response || 
         data.answer || 
         data.result || 
-        data.message || 
+        data.content ||
         (typeof data === "string" ? data : JSON.stringify(data, null, 2));
       
       // Optional Improvement: prefix
@@ -55,6 +60,7 @@ export default function ChatLayout() {
       }
       
       console.log("API FULL RESPONSE:", data);
+      console.log("AI TEXT:", aiContent);
       
       const botMsg = {
         role: "assistant",
