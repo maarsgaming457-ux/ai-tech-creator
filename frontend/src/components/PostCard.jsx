@@ -1,8 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, MoreVertical } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
 // Helper for relative time (e.g. "2 minutes ago")
 function getRelativeTime(timestampInSeconds) {
@@ -50,10 +48,10 @@ export default function PostCard({ post }) {
       </div>
 
       {/* Main Content */}
-      <div className="prose prose-invert max-w-none mb-4 text-slate-200 text-[15px] leading-relaxed">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      <div className="mb-4 text-slate-200 text-[15px] leading-relaxed">
+        <p style={{ whiteSpace: "pre-line" }}>
           {post.content || post.text}
-        </ReactMarkdown>
+        </p>
       </div>
 
       {/* Dynamic Tags Mockup */}
