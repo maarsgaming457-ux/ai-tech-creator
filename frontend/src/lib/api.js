@@ -29,3 +29,25 @@ export const generatePost = async (userMessage) => {
     throw new Error("Server not reachable or CORS issue");
   }
 };
+
+export const initAgent = async () => {
+  try {
+    const res = await fetch(`${API_URL}/api/agent/init`, { method: "POST" });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("[AGENT INIT ERROR]", error);
+    throw error;
+  }
+};
+
+export const fetchAgentFeed = async () => {
+  try {
+    const res = await fetch(`${API_URL}/api/agent/feed`);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("[AGENT FEED ERROR]", error);
+    throw error;
+  }
+};
