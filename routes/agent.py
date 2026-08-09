@@ -4,7 +4,9 @@ import uuid
 import random
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
+import re
 from ai_tech_creator.post_generator import generate_post
+from services.db_service import save_user_post
 
 router = APIRouter(tags=["agent"])
 
@@ -30,6 +32,8 @@ HOOKS = [
     "Start with a direct question to the reader's pain points.",
     "Start with an 'I used to believe X, until Y' statement."
 ]
+
+PLATFORMS = ['LinkedIn', 'Twitter', 'Instagram', 'Threads']
 
 class InitRequest(BaseModel):
     topic: str = "technology"
@@ -58,28 +62,34 @@ async def post_generation(topic):
     
     chosen_style = random.choice(STYLES)
     chosen_hook = random.choice(HOOKS)
+    chosen_platform = random.choice(PLATFORMS)
     
     prompt = f"""
-Write a HIGHLY VIRAL, scroll-stopping LinkedIn post about: {topic}
-
-Style to use for this specific post:
-{chosen_style}
-
-Hook strategy to use:
-{chosen_hook}
+You are a top-tier AI Viral Content Engine.
+Your task is to write a scroll-stopping post for: {chosen_platform}
+Topic: {topic}
+Style: {chosen_style}
+Hook Strategy: {chosen_hook}
 
 CRITICAL INSTRUCTION TO PREVENT REPETITION:
 You MUST NOT generate a post that sounds similar to these recently generated posts:
 {avoidance_context}
-Your output must be completely unique, fresh, and use a completely different angle.
 
-Requirements:
-- Focus strictly on the topic, style, and hook strategy.
-- Your first line must be an incredibly strong, punchy hook.
-- Exactly 3 to 6 meaningful body lines in total.
+PROCESS:
+1. Brainstorm 3 distinct hooks based on the strategy.
+2. Score each hook from 1-100 on viral potential.
+3. Select the best hook.
+4. Write the final content using that hook.
+
+OUTPUT FORMAT:
+You MUST wrap your brainstorming and scoring (Steps 1-3) inside <thinking>...</thinking> tags.
+Then, output ONLY the final post text outside the tags.
+
+CONTENT REQUIREMENTS:
+- If {chosen_platform} is Twitter or Threads, format the content as a cohesive thread (multiple paragraphs).
+- Otherwise, output exactly 3 to 6 meaningful body lines.
 - Each line on a new line (use proper spacing for readability).
-- Human-like tone (conversational, not robotic, no generic filler words).
-- Write like a top-tier LinkedIn creator.
+- Human-like tone (conversational, not robotic).
 - Include 5 to 8 highly relevant hashtags at the very end.
 """
     
@@ -110,6 +120,10 @@ Requirements:
             
     content = content.strip() if content else ""
     
+    # Strip <thinking> tags to get the final post
+    if "<thinking>" in content and "</thinking>" in content:
+        content = re.sub(r'<thinking>.*?</thinking>', '', content, flags=re.DOTALL).strip()
+    
     # HANDLE EMPTY RESPONSE (IMPORTANT)
     if not content or len(content) < 20:
         content = f"""{topic.title()} is transforming industries at a rapid pace.
@@ -124,14 +138,32 @@ The future of {topic} holds immense opportunities."""
     # Force line breaks failsafe if model ignores formatting
     content = content.replace(". ", ".\\n")
     
+    post_text = f"[{chosen_platform}]\\n\\n{content.strip()}"
+    
     post = {
         "id": str(uuid.uuid4()),
         "createdAt": time.time(),
         "topic": str(topic),
-        "post": str(content).strip(),
+        "post": post_text,
         "rationale": "High engagement probability based on real-time LLM analysis.",
         "sources": ["LLM Generation", "Domain Trends"]
     }
+    
+    # Save to database
+    try:
+        db_post = {
+            "topic": str(topic),
+            "post": post_text,
+            "rationale": f"Style: {chosen_style} | Strategy: {chosen_hook}",
+            "status": "PUBLISHED",
+            "category": chosen_platform,
+            "timestamp": time.time()
+        }
+        # Hardcoding user_id=1 for the autonomous agent global feed
+        save_user_post(1, db_post)
+    except Exception as e:
+        print("Failed to save post to DB:", e)
+        
     return post
 
 async def agent_loop():
@@ -158,8 +190,8 @@ async def agent_loop():
             if len(AGENT_POSTS) > 100:
                 AGENT_POSTS.pop()
         
-        # 4. Sleep to strictly simulate 2-minute cycle
-        await asyncio.sleep(120)
+        # 4. Sleep for 2 hours (7200 seconds) for real SaaS scheduling
+        await asyncio.sleep(7200)
 
 @router.post("/agent/init")
 async def init_agent(req: InitRequest, background_tasks: BackgroundTasks):
