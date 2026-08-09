@@ -6,7 +6,7 @@ import { Bot, User, Copy, Check } from 'lucide-react'
 import clsx from 'clsx'
 
 export default function MessageBubble({ message }) {
-  const isAi = message.role === 'ai'
+  const isAi = message.role === 'ai' || message.role === 'assistant'
   const [copied, setCopied] = useState(false)
   const [displayedContent, setDisplayedContent] = useState('')
 

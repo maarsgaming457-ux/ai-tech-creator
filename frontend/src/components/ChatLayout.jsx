@@ -39,26 +39,32 @@ export default function ChatLayout() {
 
     try {
       // In ChatGPT style, we just pass the prompt. We'll map it to the expected schema.
-      const data = await generatePost("general", userPrompt)
+      const data = await generatePost(input);
       
-      // If the backend wraps in { success: true }, check it. Otherwise assume success if no throw.
-      if (data.success === false) {
-        throw new Error(data.error || data.message || "Failed to generate post")
-      }
+      let aiContent = data.message || "Generated successfully";
+      // Optional Improvement: prefix
+      aiContent = aiContent.replace("Generated content for:", "🤖 AI:");
       
-      // The backend returns { success: true, post: "..." } or { data: { post: "..." } }
-      let aiContent = data.post || data.data?.post || (typeof data.data === 'string' ? data.data : null) || "Generated successfully."
+      const botMsg = {
+        role: "assistant",
+        content: aiContent,
+        isNew: true
+      };
       
-      setMessages(prev => [...prev, { role: 'ai', content: aiContent, isNew: true }])
-    } catch (err) {
-      console.error(err)
-      let errMsg = err.message || "An unexpected error occurred"
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (error) {
+      console.error(error);
+      let errMsg = error.message || "An unexpected error occurred";
       if (errMsg.includes("Rate limit") || errMsg.includes("429")) {
-        errMsg = "⏳ Please wait a few seconds before generating again"
+        errMsg = "⏳ Please wait a few seconds before generating again";
       }
-      showError(errMsg)
+      showError(errMsg);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: `❌ Error: ${errMsg}`, isNew: true }
+      ]);
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
   }
 
