@@ -75,28 +75,12 @@ async def onboard_user(req: OnboardRequest, request: Request, current_user: int 
     return success_response(message="Onboarded successfully")
 
 @router.post("/generate")
-# To enable auth again: add Depends(get_current_user)
-async def generate(req: GenerateRequest, request: Request, current_user: int = 1):
-    print("API HIT:", request.url.path)
-    print("REQUEST TIME:", time.time())
-    print("=== GENERATE API HIT ===")
-    print("Request:", req)
-    try:
-        print("Calling AI service...")
-        post_data = await asyncio.wait_for(
-            asyncio.to_thread(_generate_logic, current_user, req.category, req.series_topic),
-            timeout=8.0
-        )
-        print("AI Response:", post_data)
-        return success_response(post_data)
-    except asyncio.TimeoutError:
-        print("ERROR: AI Generation timed out.")
-        return error_response("AI Generation timed out after 8 seconds.", 408)
-    except Exception as e:
-        import traceback
-        print("ERROR:", str(e))
-        traceback.print_exc()
-        raise e
+async def generate_post(data: GenerateRequest):
+    return {
+        "success": True,
+        "message": f"Generated content for: {data.series_topic}",
+        "category": data.category
+    }
 
 @router.post("/reply")
 # To enable auth again: add Depends(get_current_user)

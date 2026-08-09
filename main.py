@@ -15,18 +15,19 @@ from routes.posts import router as posts_router
 from services.db_service import init_db
 from utils.rate_limit import RateLimiter
 
-# Initialize FastAPI app
 app = FastAPI(title="AI Tech Creator (Production Ready)")
 
-# ✅ ---------------- CORS FIX (IMPORTANT) ----------------
+# ✅ MUST be immediately after FastAPI()
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://ai-tech-creator-1.vercel.app"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://ai-tech-creator-1.vercel.app" # Placeholder for production vercel domain
-    ],
-    allow_credentials=True, 
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
