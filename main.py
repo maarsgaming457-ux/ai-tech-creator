@@ -50,6 +50,7 @@ def on_startup():
 # Routers
 app.include_router(auth.router)
 app.include_router(posts_router, prefix="/api")
+# Autonomous agent routes
 app.include_router(agent_router, prefix="/api")
 app.include_router(background.router, prefix="/api")
 app.include_router(upload.router, prefix="/api")
