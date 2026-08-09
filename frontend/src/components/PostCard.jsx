@@ -17,7 +17,10 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
   const timeString = getRelativeTime(post.createdAt);
   
   const contentText = post.post || post.content || "";
-  const lines = contentText.split('\n');
+  const lines = contentText
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
@@ -75,9 +78,16 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
         </div>
       </div>
 
-      <div className="mb-4 text-[#e5e7eb] text-[15px] leading-[1.8] post-content">
-        {lines.map((line, i) => (
-          <p key={i} className={line.trim().startsWith("#") ? "text-purple-400 font-semibold" : "mb-2"}>
+      <div className="bg-[#0f172a]/50 p-4 rounded-xl shadow-lg mb-4 space-y-2 text-[15px] leading-[1.8] text-gray-200">
+        {lines.map((line, index) => (
+          <p
+            key={index}
+            className={
+              line.startsWith("#")
+                ? "text-purple-400 font-semibold mt-3"
+                : "flex items-start gap-2"
+            }
+          >
             {line}
           </p>
         ))}

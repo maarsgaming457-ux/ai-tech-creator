@@ -114,34 +114,18 @@ async def post_generation(topic):
     context = get_latest_context(topic) + f"\\nVariation seed: {random.randint(1,100000)}"
     
     prompt = f"""
-Act as a viral LinkedIn content creator.
+Write a viral LinkedIn post about {topic}
 
-Write a post about {topic}
+STRICT RULES:
+- 5 to 7 lines ONLY
+- Each line MUST be on a real new line (no \\n)
+- Do NOT include [Twitter], [LinkedIn], or labels
+- Do NOT include --- separators
+- Use clean formatting
+- Add emojis
+- Add 4–5 hashtags at the end
 
-Rules:
-- 5 to 7 lines
-- Each line MUST be on a new line
-- Add emoji at start of each line (optional but preferred)
-- Short lines only
-- No paragraph
-- No \\n text
-- Clean spacing
-
-Add 4-6 relevant hashtags at end (new line)
-
-Example:
-
-🚀 AI is evolving faster than ever.
-
-🔥 Industries are being reshaped daily.
-📈 Skills matter more than degrees.
-💡 Practical knowledge wins.
-
-🌍 The future belongs to builders.
-
-#AI #Technology #Innovation #Future
-
-Return ONLY final post.
+Return ONLY the final formatted post.
 
 
 ========================================
@@ -258,16 +242,26 @@ Students and professionals must focus on practical skills.
 Hands-on projects are key to mastering this field.
 The future of {topic} holds immense opportunities."""
         
-    # FIX NEWLINES
+    # Step 1: Decode escaped characters
     try:
         content = codecs.decode(content, "unicode_escape")
     except Exception:
         pass
-    content = content.replace("\r", "").strip()
 
-    # REMOVE unwanted prefixes like [Twitter]
-    if content.startswith("["):
-        content = content.split("]", 1)[-1].strip()
+    # Step 2: Replace ANY remaining escaped \n manually
+    content = content.replace("\\n", "\n")
+
+    # Step 3: Remove unwanted prefixes like [Twitter], [LinkedIn]
+    content = re.sub(r"^\[.*?\]\s*", "", content)
+
+    # Step 4: Remove separators like ---
+    content = re.sub(r"^-{2,}", "", content)
+
+    # Step 5: Remove extra blank lines
+    content = re.sub(r"\n\s*\n", "\n\n", content)
+
+    # Step 6: Final cleanup
+    content = content.replace("\r", "").strip()
 
     print("FINAL TOPIC:", topic)
     print("FINAL POST:", content)
