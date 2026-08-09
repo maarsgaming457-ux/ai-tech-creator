@@ -1,4 +1,6 @@
 import os
+import re
+from fastapi.responses import JSONResponse
 import codecs
 import asyncio
 import time
@@ -251,9 +253,6 @@ The future of {topic} holds immense opportunities."""
     # Remove separators like ---
     content = re.sub(r"^-{2,}", "", content)
 
-    # Fix encoding issues manually
-    content = content.encode("utf-8", "ignore").decode("utf-8")
-
     # Clean spacing
     content = re.sub(r"\n\s*\n", "\n\n", content)
 
@@ -370,10 +369,13 @@ async def manual_generate(req: InitRequest):
     print("FINAL OUTPUT:", content)
     
     # 3. Return the exact payload expected by frontend (and support requested structure)
-    return {
-        "success": True,
-        "post": content,
-        "topic": topic,
-        "content": content,
-        "timestamp": post.get("createdAt")
-    }
+    return JSONResponse(
+        content={
+            "success": True,
+            "post": content,
+            "topic": topic,
+            "content": content,
+            "timestamp": post.get("createdAt")
+        },
+        media_type="application/json"
+    )

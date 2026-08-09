@@ -37,6 +37,13 @@ app.add_middleware(
 # ✅ Rate limiter middleware (after CORS)
 app.middleware("http")(RateLimiter(calls=20, period=60))
 
+@app.middleware("http")
+async def force_utf8(request: Request, call_next):
+    response = await call_next(request)
+    if "application/json" in response.headers.get("content-type", ""):
+        response.headers["Content-Type"] = "application/json; charset=utf-8"
+    return response
+
 # Static files & templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")

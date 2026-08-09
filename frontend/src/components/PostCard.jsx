@@ -20,7 +20,7 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
   const lines = contentText
     .split("\n")
     .map(line => line.trim())
-    .filter(line => line.length > 0);
+    .filter(Boolean);
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
@@ -97,21 +97,21 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
       <div className="flex gap-3 mt-4">
         <button 
           onClick={() => copyToClipboard(contentText)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:scale-105 hover:shadow-[0_0_10px_rgba(99,102,241,0.6)] transition"
+          className="px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition shadow"
         >
           📋 Copy
         </button>
         <button 
           onClick={() => shareLinkedIn(contentText)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:scale-105 hover:shadow-[0_0_10px_rgba(99,102,241,0.6)] transition"
+          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 transition shadow"
         >
           🔗 LinkedIn
         </button>
         <button 
           onClick={() => shareTwitter(contentText)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:scale-105 hover:shadow-[0_0_10px_rgba(99,102,241,0.6)] transition"
+          className="px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-900 transition shadow"
         >
-          🐦 Twitter
+          𝕏 Share
         </button>
       </div>
 
