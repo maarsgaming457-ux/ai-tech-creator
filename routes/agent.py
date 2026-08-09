@@ -113,18 +113,46 @@ async def post_generation(topic):
     context = get_latest_context(topic) + f"\\nVariation seed: {random.randint(1,100000)}"
     
     prompt = f"""
-You are a top-tier AI Viral Content Engine.
-Your task is to write a scroll-stopping post for: {chosen_platform}
-Topic: {topic}
-Style: {chosen_style}
-Hook Strategy: {chosen_hook}
-Tone: {tone}
+You are a viral content creator for LinkedIn and social media.
 
-LATEST REAL-WORLD INFORMATION:
+========================================
+🎯 GOAL
+========================================
+Generate HIGH-QUALITY viral posts with:
+- 5 to 7 SHORT lines
+- Each line separated properly (real newline, not \\n)
+- Strong hook in first line
+- Easy readable format
+- Professional + engaging tone
+
+========================================
+🧠 CONTENT STRUCTURE (MANDATORY)
+========================================
+Line 1 → Hook (attention grabbing)
+Line 2 → Insight / trend
+Line 3 → Real-world relevance
+Line 4 → Advice or takeaway
+Line 5 → Future / opportunity
+(Optional Line 6–7 → Bonus insight)
+
+========================================
+📌 FORMAT RULES (VERY IMPORTANT)
+========================================
+- DO NOT return single paragraph
+- DO NOT use "\\n"
+- Use REAL line breaks
+- Each sentence MUST be on a new line
+- Keep each line short (max 12–15 words)
+
+========================================
+LATEST REAL-WORLD INFORMATION
+========================================
 Use the following context to ensure the post is highly relevant and up-to-date:
 {context}
 
-CRITICAL INSTRUCTION TO PREVENT REPETITION:
+========================================
+CRITICAL INSTRUCTION TO PREVENT REPETITION
+========================================
 You MUST generate a COMPLETELY DIFFERENT post.
 Use a new angle, new hook, new structure.
 
@@ -138,22 +166,46 @@ If similar → REWRITE COMPLETELY.
 Recently generated posts:
 {avoidance_context}
 
-PROCESS:
-1. Brainstorm 3 distinct hooks based on the strategy.
-2. Score each hook from 1-100 on viral potential.
-3. Select the best hook.
-4. Write the final content using that hook.
+========================================
+🏷️ HASHTAGS
+========================================
+At the end, add 3–5 hashtags like:
+#AI #Technology #Innovation #Career
 
-OUTPUT FORMAT:
-You MUST wrap your brainstorming and scoring (Steps 1-3) inside <thinking>...</thinking> tags.
-Then, output ONLY the final post text outside the tags.
+========================================
+📥 INPUT
+========================================
+Topic: {topic}
+Platform: {chosen_platform}
+Style: {chosen_style}
+Hook Strategy: {chosen_hook}
+Tone: {tone}
 
-CONTENT REQUIREMENTS:
-- If {chosen_platform} is Twitter or Threads, format the content as a cohesive thread (multiple paragraphs).
-- Otherwise, output exactly 3 to 6 meaningful body lines.
-- Each line on a new line (use proper spacing for readability).
-- Human-like tone (conversational, not robotic).
-- Include 5 to 8 highly relevant hashtags at the very end.
+========================================
+📤 OUTPUT EXAMPLE
+========================================
+AI is changing the world faster than ever.
+
+Every industry is being reshaped by automation.
+Skills are becoming more important than degrees.
+Practical knowledge is the new currency.
+Those who adapt will lead the future.
+Those who don’t will struggle to survive.
+
+#AI #Tech #Future
+
+========================================
+🚫 STRICT RULES
+========================================
+- Minimum 5 lines
+- Maximum 7 lines
+- Clean formatting only
+- No paragraph block
+- Output your reasoning inside <thinking>...</thinking> tags first.
+
+========================================
+OUTPUT ONLY THE FINAL POST (after the thinking block)
+========================================
 """
     
     content = ""
