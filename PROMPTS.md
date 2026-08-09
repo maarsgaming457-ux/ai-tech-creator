@@ -10,7 +10,7 @@ This project was built using AI-assisted development with multiple prompts for b
 
 ## 🚀 1. Backend Development Prompts
 
-### Prompt 1:
+### Antigravity Prompt 1:
 ```txt
 Act as a senior FastAPI + AI backend engineer.
 
@@ -24,7 +24,7 @@ Ensure that:
 ✔ Placeholder text is completely removed
 ```
 
-### Prompt 2:
+### Antigravity Prompt 2:
 ```txt
 Act as a senior FastAPI + LangChain backend engineer.
 
@@ -37,7 +37,7 @@ Search ENTIRE PROJECT for "Generating viral content" and DELETE EVERY occurrence
 Locate the function actually used by /generate endpoint, agent loop, scheduler.
 ```
 
-### Prompt 3:
+### Antigravity Prompt 3:
 ```txt
 Act as a senior Full Stack Engineer (FastAPI + React + Tailwind).
 
@@ -49,7 +49,7 @@ Fix 3 major issues in AI Tech Creator:
 Fix escaped newline "\\n" via content.replace("\\n", "\n")
 ```
 
-### Prompt 4:
+### Antigravity Prompt 4:
 ```txt
 Act as a senior Full Stack Engineer (FastAPI + React).
 
@@ -59,7 +59,7 @@ Fix escaped newlines properly via `codecs.decode(content, "unicode_escape")`.
 Remove headers like [Twitter].
 ```
 
-### Prompt 5:
+### Antigravity Prompt 5:
 ```txt
 Act as a senior Full Stack Engineer (FastAPI + React).
 
@@ -69,7 +69,7 @@ Remove `codecs.decode(..., "unicode_escape")`.
 Replace with safe cleaning using `content.encode("utf-8", "ignore").decode("utf-8")`.
 ```
 
-### Prompt 6:
+### Antigravity Prompt 6:
 ```txt
 Act as a senior Full Stack Engineer (FastAPI + React).
 
@@ -82,7 +82,7 @@ Add FastAPI middleware to force UTF-8: response.headers["Content-Type"] = "appli
 
 ## 🎨 2. Frontend & UI Prompts
 
-### Prompt 1:
+### Antigravity Prompt 1:
 ```txt
 Fix frontend text rendering issue.
 Post content contains newline characters (\n) but UI displays everything in one line.
@@ -91,7 +91,7 @@ Apply CSS: white-space: pre-line;
 Do NOT modify backend formatting.
 ```
 
-### Prompt 2:
+### Antigravity Prompt 2:
 ```txt
 Act as a senior Full Stack Engineer (FastAPI + React).
 The newline issue is STILL not fully resolved.
@@ -101,7 +101,7 @@ Highlight hashtags with purple-400 font-semibold.
 Add premium UI styling with bg-[#0f172a] p-4 rounded-xl shadow-lg.
 ```
 
-### Prompt 3:
+### Antigravity Prompt 3:
 ```txt
 Act as a senior Full Stack Engineer (FastAPI + React).
 Replace buttons with premium tailwind buttons:
@@ -110,7 +110,7 @@ Add hover glow via box-shadow 0 0 10px rgba(99,102,241,0.6).
 Add gradient UI polish to Post card wrapper.
 ```
 
-### Prompt 4:
+### Antigravity Prompt 4:
 ```txt
 Act as a senior Full Stack Engineer (FastAPI + React).
 Replace Twitter button with X (black theme).
@@ -121,7 +121,7 @@ Use simple background colors instead of gradients for premium buttons.
 
 ## 🧠 3. AI & Content Generation Prompts
 
-### Prompt 1:
+### Antigravity Prompt 1:
 ```txt
 Act as a viral content creator for LinkedIn and social media.
 
@@ -139,7 +139,7 @@ Line 4 → Advice or takeaway
 Line 5 → Future / opportunity
 ```
 
-### Prompt 2:
+### Antigravity Prompt 2:
 ```txt
 Force clean AI output:
 Write a viral LinkedIn post about {topic}
@@ -157,7 +157,7 @@ STRICT RULES:
 
 ## 🚀 4. Deployment & DevOps Prompts
 
-### Prompt 1:
+### Antigravity Prompt 1:
 ```txt
 Act as a senior React + Vercel deployment engineer.
 Fix the Vercel build failure: Command "npm run build" exited with 1.
@@ -165,7 +165,7 @@ Check build error (SyntaxError, Module not found, CSS issue, JSX issue).
 Fix common JSX and Tailwind CSS styling errors.
 ```
 
-### Prompt 2:
+### Antigravity Prompt 2:
 ```txt
 Act as a senior DevOps + Full Stack Engineer.
 My deployed app on Vercel is showing: DNS_PROBE_FINISHED_NXDOMAIN.
@@ -175,7 +175,7 @@ Create or update vercel.json for Serverless routing.
 Force redeploy.
 ```
 
-### Prompt 3:
+### Antigravity Prompt 3:
 ```txt
 Act as a senior DevOps + Full Stack Engineer.
 My project is currently broken (Vercel shows DNS_PROBE_FINISHED_NXDOMAIN and site is down).
