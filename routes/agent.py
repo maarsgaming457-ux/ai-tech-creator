@@ -12,10 +12,10 @@ router = APIRouter(tags=["agent"])
 AGENT_POSTS = []
 TOPICS_SEEN = set()
 IS_AGENT_RUNNING = False
-CURRENT_TOPIC = "AI Trends"
+CURRENT_TOPIC = "technology"
 
 class InitRequest(BaseModel):
-    topic: str = "AI Trends"
+    topic: str = "technology"
 
 def topic_discovery():
     """Discover a new topic based on CURRENT_TOPIC."""
@@ -36,33 +36,17 @@ def editorial_filtering(topic):
 async def post_generation(topic):
     """Generate a structured 6-line post based on the topic using Mistral."""
     
-    prompt = f"""You are a strict content generator.
+    prompt = f"""
+Generate a LinkedIn-style post STRICTLY about: {topic}
 
-Generate a LinkedIn-style post ONLY about the topic: "{topic}"
-
-CRITICAL RULES:
-- You MUST NOT change the topic
-- You MUST NOT talk about AI unless topic is AI
-- Stay 100% focused on the given topic
-- Use domain-specific language
-- The topic is NOT AI unless explicitly provided by the user
-
-FORMAT RULES (MANDATORY):
-- EXACTLY 5 to 6 lines
-- Minimum 120–150 words
-- Each line MUST be separated using \\n
-- DO NOT write in a single paragraph
-- DO NOT return one sentence
-
-STRUCTURE:
-1. Hook
-2. Insight
-3. Explanation
-4. Value
-5. Question
-6. Hashtags (3–4)
-
-If output does not follow rules, it is INVALID.
+Rules:
+- Must be about the given topic only
+- No generic AI content
+- 5 to 6 lines
+- Each line on new line
+- Simple and engaging language
+- No hashtags
+- No extra explanation
 """
     
     content = ""
@@ -90,6 +74,15 @@ If output does not follow rules, it is INVALID.
             await asyncio.sleep(5)
             attempts += 1
             
+    content = content.strip() if content else ""
+    
+    # HANDLE EMPTY RESPONSE (IMPORTANT)
+    if not content or len(content) < 20:
+        content = f"{topic} is rapidly evolving in today's world.\nIt is creating new opportunities and innovations.\nStudents and professionals must stay updated.\nPractical skills are becoming more important.\nThe future of {topic} is very promising."
+        
+    print("TOPIC:", topic)
+    print("GENERATED:", content)
+    
     # Force line breaks failsafe if model ignores formatting
     content = content.replace(". ", ".\\n")
     
@@ -134,10 +127,10 @@ async def agent_loop():
 async def init_agent(req: InitRequest, background_tasks: BackgroundTasks):
     global IS_AGENT_RUNNING, CURRENT_TOPIC
     
-    # Update topic if provided (otherwise defaults to "AI Trends")
+    # Update topic if provided (otherwise defaults to "technology")
     received_topic = req.topic.strip() if req.topic else ""
     if not received_topic:
-        received_topic = "AI Trends"
+        received_topic = "technology"
         
     CURRENT_TOPIC = received_topic
     print("FINAL TOPIC:", CURRENT_TOPIC)
