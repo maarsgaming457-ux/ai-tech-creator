@@ -30,9 +30,15 @@ export const generatePost = async (userMessage) => {
   }
 };
 
-export const initAgent = async () => {
+export const initAgent = async (topic) => {
   try {
-    const res = await fetch(`${API}/api/agent/init`, { method: "POST" });
+    const res = await fetch(`${API}/api/agent/init`, { 
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ topic: topic || "AI Trends" })
+    });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data = await res.json();
     console.log("API RESPONSE:", data);

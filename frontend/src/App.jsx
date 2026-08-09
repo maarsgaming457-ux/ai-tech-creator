@@ -11,6 +11,7 @@ function App() {
   const [isInitializing, setIsInitializing] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [topic, setTopic] = useState("");
 
   // Initialize Theme
   useEffect(() => {
@@ -71,7 +72,7 @@ function App() {
   const handleRunAgent = async () => {
     try {
       setIsInitializing(true);
-      const data = await initAgent();
+      const data = await initAgent(topic);
       setAgentId(data.agentId || 'ag-12345');
       setIsAgentRunning(true);
       setLoading(true);
@@ -100,7 +101,9 @@ function App() {
       <main className="w-full flex flex-col items-center px-4 pb-20">
         <Hero 
           onRunAgent={handleRunAgent} 
-          isInitializing={isInitializing} 
+          isInitializing={isInitializing}
+          topic={topic}
+          setTopic={setTopic}
         />
         
         {/* Main Dashboard Layout */}

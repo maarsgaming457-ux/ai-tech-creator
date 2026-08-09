@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Eye } from 'lucide-react';
+import { Zap, Eye, Target } from 'lucide-react';
 
-export default function Hero({ onRunAgent, isInitializing }) {
+export default function Hero({ onRunAgent, isInitializing, topic, setTopic }) {
   return (
     <div className="w-full max-w-[1200px] mx-auto mt-8 mb-8">
       <motion.div 
@@ -26,15 +26,28 @@ export default function Hero({ onRunAgent, isInitializing }) {
             AI-powered agent that discovers trends and creates engaging content automatically.
           </p>
           
-          <div className="flex flex-wrap items-center gap-4">
-            <button
-              onClick={onRunAgent}
-              disabled={isInitializing}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#00ff9f] to-emerald-400 hover:from-[#00e68f] hover:to-emerald-500 text-slate-900 font-bold transition-all shadow-[0_0_20px_rgba(0,255,159,0.3)] hover:shadow-[0_0_30px_rgba(0,255,159,0.5)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
-            >
-              <Zap className="w-5 h-5" />
-              <span>{isInitializing ? 'Initializing...' : 'Run Agent'}</span>
-            </button>
+          <div className="flex flex-col gap-4">
+            {/* Topic Input Box */}
+            <div className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-xl px-4 py-3 w-full max-w-sm focus-within:border-[#00ff9f]/50 focus-within:shadow-[0_0_15px_rgba(0,255,159,0.1)] transition-all">
+              <Target className="w-5 h-5 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Topic (e.g. AI Trends, SaaS)"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                className="bg-transparent border-none outline-none text-white placeholder-slate-500 w-full font-medium"
+              />
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                onClick={onRunAgent}
+                disabled={isInitializing}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#00ff9f] to-emerald-400 hover:from-[#00e68f] hover:to-emerald-500 text-slate-900 font-bold transition-all shadow-[0_0_20px_rgba(0,255,159,0.3)] hover:shadow-[0_0_30px_rgba(0,255,159,0.5)] disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+              >
+                <Zap className="w-5 h-5" />
+                <span>{isInitializing ? 'Initializing...' : 'Run Agent'}</span>
+              </button>
             
             <button
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all hover:border-white/20"
@@ -42,6 +55,7 @@ export default function Hero({ onRunAgent, isInitializing }) {
               <Eye className="w-5 h-5 text-slate-300" />
               <span>View Feed</span>
             </button>
+          </div>
           </div>
         </div>
 
