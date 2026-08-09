@@ -80,8 +80,8 @@ Rules:
     if not content or len(content) < 20:
         content = f"{topic} is rapidly evolving in today's world.\nIt is creating new opportunities and innovations.\nStudents and professionals must stay updated.\nPractical skills are becoming more important.\nThe future of {topic} is very promising."
         
-    print("TOPIC:", topic)
-    print("GENERATED:", content)
+    print("FINAL TOPIC:", topic)
+    print("FINAL POST:", content)
     
     # Force line breaks failsafe if model ignores formatting
     content = content.replace(". ", ".\\n")
@@ -89,8 +89,8 @@ Rules:
     post = {
         "id": str(uuid.uuid4()),
         "createdAt": time.time(),
-        "topic": topic,
-        "text": content,
+        "topic": str(topic),
+        "post": str(content).strip(),
         "rationale": "High engagement probability based on real-time LLM analysis.",
         "sources": ["LLM Generation", "Domain Trends"]
     }

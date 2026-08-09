@@ -41,7 +41,7 @@ function App() {
             const newPosts = data.map(p => ({
               ...p,
               id: p.id || `temp-${Date.now()}-${Math.random()}`,
-              content: p.content || p.text || "",
+              post: p.post || "⚠️ No content generated",
               createdAt: p.createdAt || (Date.now() / 1000)
             })).filter(p => !existingIds.has(p.id));
             

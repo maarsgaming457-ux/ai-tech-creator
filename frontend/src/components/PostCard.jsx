@@ -49,9 +49,9 @@ export default function PostCard({ post }) {
 
       {/* Main Content */}
       <div className="mb-4 text-slate-200 text-[15px] leading-relaxed">
-        <p style={{ whiteSpace: "pre-line" }}>
-          {post.content || post.text}
-        </p>
+        <div style={{ whiteSpace: "pre-line" }}>
+          {post.post}
+        </div>
       </div>
 
       {/* Dynamic Tags Mockup */}
