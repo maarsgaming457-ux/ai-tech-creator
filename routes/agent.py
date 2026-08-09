@@ -242,26 +242,22 @@ Students and professionals must focus on practical skills.
 Hands-on projects are key to mastering this field.
 The future of {topic} holds immense opportunities."""
         
-    # Step 1: Decode escaped characters
-    try:
-        content = codecs.decode(content, "unicode_escape")
-    except Exception:
-        pass
-
-    # Step 2: Replace ANY remaining escaped \n manually
+    # Fix escaped newlines ONLY
     content = content.replace("\\n", "\n")
 
-    # Step 3: Remove unwanted prefixes like [Twitter], [LinkedIn]
+    # Remove unwanted prefixes like [Twitter], [LinkedIn]
     content = re.sub(r"^\[.*?\]\s*", "", content)
 
-    # Step 4: Remove separators like ---
+    # Remove separators like ---
     content = re.sub(r"^-{2,}", "", content)
 
-    # Step 5: Remove extra blank lines
+    # Fix encoding issues manually
+    content = content.encode("utf-8", "ignore").decode("utf-8")
+
+    # Clean spacing
     content = re.sub(r"\n\s*\n", "\n\n", content)
 
-    # Step 6: Final cleanup
-    content = content.replace("\r", "").strip()
+    content = content.strip()
 
     print("FINAL TOPIC:", topic)
     print("FINAL POST:", content)

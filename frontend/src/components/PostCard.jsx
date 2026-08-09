@@ -42,7 +42,7 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="glass-card w-full rounded-2xl p-5 relative overflow-hidden group hover:border-white/20 hover:-translate-y-[2px] transition-all duration-300"
+      className="bg-gradient-to-br from-[#0f172a] to-[#020617] p-5 rounded-xl shadow-xl border border-gray-800 w-full relative overflow-hidden group hover:-translate-y-[2px] transition-all duration-300"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -97,19 +97,19 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
       <div className="flex gap-3 mt-4">
         <button 
           onClick={() => copyToClipboard(contentText)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-md text-xs font-medium border border-white/10 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:scale-105 hover:shadow-[0_0_10px_rgba(99,102,241,0.6)] transition"
         >
           📋 Copy
         </button>
         <button 
           onClick={() => shareLinkedIn(contentText)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0077b5]/10 hover:bg-[#0077b5]/20 text-[#0a66c2] hover:text-[#0077b5] dark:text-[#70b5f9] dark:hover:text-blue-400 rounded-md text-xs font-medium border border-[#0077b5]/20 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:scale-105 hover:shadow-[0_0_10px_rgba(99,102,241,0.6)] transition"
         >
           🔗 LinkedIn
         </button>
         <button 
           onClick={() => shareTwitter(contentText)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1da1f2]/10 hover:bg-[#1da1f2]/20 text-[#1da1f2] hover:text-[#1a91da] rounded-md text-xs font-medium border border-[#1da1f2]/20 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:scale-105 hover:shadow-[0_0_10px_rgba(99,102,241,0.6)] transition"
         >
           🐦 Twitter
         </button>
