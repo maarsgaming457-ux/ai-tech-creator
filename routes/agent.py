@@ -355,16 +355,22 @@ async def stop_agent():
 async def manual_generate(req: InitRequest):
     topic = req.topic.strip() if req.topic else "technology"
     
-    async def bg_generate():
-        post = await post_generation(topic)
-        AGENT_POSTS.insert(0, post)
-        if len(AGENT_POSTS) > 100:
-            AGENT_POSTS.pop()
-            
-    asyncio.create_task(bg_generate())
+    # 1. AWAIT the generation instead of pushing it to the background
+    # This prevents the placeholder issue
+    post = await post_generation(topic)
     
+    AGENT_POSTS.insert(0, post)
+    if len(AGENT_POSTS) > 100:
+        AGENT_POSTS.pop()
+            
+    # 2. Extract the actual content string from the post object
+    content = post.get("post", "").strip()
+    
+    # 3. Return the exact payload expected by frontend (and support requested structure)
     return {
         "success": True,
-        "post": f"🔥 Generating viral content on {topic}...",
-        "topic": topic
+        "post": content,
+        "topic": topic,
+        "content": content,
+        "timestamp": post.get("createdAt")
     }
