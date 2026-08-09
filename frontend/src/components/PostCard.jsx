@@ -22,18 +22,18 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 relative overflow-hidden group hover:border-[#00ff9f]/30 hover:shadow-[0_0_15px_rgba(0,255,159,0.1)] transition-all"
+      className="w-full bg-[#111111] border border-[#1f1f1f] rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition-all"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#00ff9f]/10 border border-[#00ff9f]/20 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-[#00ff9f]" />
+          <div className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f1f1f] flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-white font-bold tracking-wide">AI Tech Creator</h3>
-              <div className="px-2 py-0.5 bg-[#00ff9f]/10 border border-[#00ff9f]/20 rounded-md text-[#00ff9f] text-[10px] font-bold uppercase tracking-wider">
+              <div className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-md text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                 AI Generated
               </div>
             </div>
@@ -44,7 +44,7 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
         </div>
         <div className="flex items-center gap-1">
           <button 
-            className="p-2 text-slate-500 hover:text-[#00ff9f] transition-colors rounded-full hover:bg-[#00ff9f]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-slate-500 hover:text-white transition-colors rounded-full hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => regeneratePost(post.topic)}
             disabled={isRegenerating}
             title="Regenerate this post"
@@ -65,12 +65,12 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
         </div>
       </div>
 
-      {/* Dynamic Tags Mockup */}
+      {/* Dynamic Tags */}
       <div className="flex flex-wrap gap-2">
-        {['#AI', '#Tech', '#Future', '#Automation'].slice(0, 2 + Math.floor(Math.random() * 3)).map((tag, idx) => (
+        {post.tags?.map((tag, idx) => (
           <span 
             key={idx}
-            className="px-3 py-1 rounded-full bg-white/5 text-slate-300 text-xs font-medium hover:bg-[#00ff9f]/10 hover:text-[#00ff9f] transition-colors cursor-pointer border border-white/5 hover:border-[#00ff9f]/30"
+            className="px-3 py-1 rounded-full bg-[#0a0a0a] text-slate-300 text-xs font-medium hover:bg-white/10 hover:text-white transition-colors cursor-pointer border border-[#1f1f1f] hover:border-slate-600"
           >
             {tag}
           </span>

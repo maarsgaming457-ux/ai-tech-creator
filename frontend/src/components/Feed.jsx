@@ -6,9 +6,9 @@ import PostCard from './PostCard';
 export default function Feed({ posts, loading, regeneratePost, isRegenerating }) {
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex items-center gap-3 mb-2 pb-4 border-b border-white/10">
-        <div className="w-8 h-8 rounded-lg bg-[#00ff9f]/10 border border-[#00ff9f]/20 flex items-center justify-center">
-          <Activity className="w-4 h-4 text-[#00ff9f]" />
+      <div className="flex items-center gap-3 mb-2 pb-4 border-b border-[#1f1f1f]">
+        <div className="w-8 h-8 rounded-lg bg-[#111111] border border-[#1f1f1f] flex items-center justify-center">
+          <Activity className="w-4 h-4 text-white" />
         </div>
         <div>
           <h2 className="text-lg font-bold text-white tracking-wide">Live Feed</h2>
@@ -20,10 +20,10 @@ export default function Feed({ posts, loading, regeneratePost, isRegenerating })
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-20 text-center gap-4 bg-white/5 border border-white/10 rounded-2xl"
+          className="flex flex-col items-center justify-center py-20 text-center gap-4 bg-[#111111] border border-[#1f1f1f] rounded-2xl"
         >
-          <div className="w-12 h-12 rounded-full border border-[#00ff9f]/30 bg-[#00ff9f]/10 flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-[#00ff9f] animate-pulse" />
+          <div className="w-12 h-12 rounded-full border border-[#1f1f1f] bg-[#0a0a0a] flex items-center justify-center">
+            <Sparkles className="w-6 h-6 text-slate-400 animate-pulse" />
           </div>
           <div>
             <h3 className="text-slate-200 font-semibold text-lg mb-1">Loading feed...</h3>
@@ -34,9 +34,9 @@ export default function Feed({ posts, loading, regeneratePost, isRegenerating })
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-20 text-center gap-4 bg-white/5 border border-white/10 rounded-2xl"
+          className="flex flex-col items-center justify-center py-20 text-center gap-4 bg-[#111111] border border-[#1f1f1f] rounded-2xl"
         >
-          <div className="w-12 h-12 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full border border-[#1f1f1f] bg-[#0a0a0a] flex items-center justify-center">
             <Activity className="w-6 h-6 text-slate-500" />
           </div>
           <div>

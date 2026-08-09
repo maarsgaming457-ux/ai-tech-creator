@@ -4,12 +4,12 @@ import { Play, Pause, Cpu, ShieldCheck } from 'lucide-react';
 export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, postsTodayCount }) {
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="w-full rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6">
+      <div className="w-full rounded-2xl border border-[#1f1f1f] bg-[#111111] p-6">
         
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-          <div className="w-8 h-8 rounded-lg bg-[#00ff9f]/20 border border-[#00ff9f]/30 flex items-center justify-center">
-            <Cpu className="w-4 h-4 text-[#00ff9f]" />
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#1f1f1f]">
+          <div className="w-8 h-8 rounded-lg bg-[#0a0a0a] border border-[#1f1f1f] flex items-center justify-center">
+            <Cpu className="w-4 h-4 text-white" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-white tracking-wide">Agent Control</h2>
@@ -22,16 +22,16 @@ export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, p
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-400">Status</span>
             <div className="flex items-center gap-2">
-              <span className={`text-sm font-semibold ${isAgentRunning ? 'text-[#00ff9f]' : 'text-slate-500'}`}>
+              <span className={`text-sm font-semibold ${isAgentRunning ? 'text-white' : 'text-slate-500'}`}>
                 {isAgentRunning ? 'Online' : 'Offline'}
               </span>
-              <div className={`w-2 h-2 rounded-full ${isAgentRunning ? 'bg-[#00ff9f] shadow-[0_0_8px_rgba(0,255,159,0.8)] animate-pulse' : 'bg-slate-600'}`} />
+              <div className={`w-2 h-2 rounded-full ${isAgentRunning ? 'bg-white animate-pulse' : 'bg-slate-600'}`} />
             </div>
           </div>
           
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-400">Mode</span>
-            <span className="text-sm font-semibold text-[#00ff9f]">Autonomous</span>
+            <span className="text-sm font-semibold text-white">Autonomous</span>
           </div>
           
           <div className="flex items-center justify-between">
@@ -47,7 +47,7 @@ export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, p
           </div>
         </div>
         
-        <div className="h-[1px] w-full bg-white/10 mb-6" />
+        <div className="h-[1px] w-full bg-[#1f1f1f] mb-6" />
 
         {/* Controls */}
         <div className="flex flex-col gap-3">
@@ -57,7 +57,7 @@ export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, p
             className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold transition-all ${
               isAgentRunning 
                 ? 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5' 
-                : 'bg-[#00ff9f] hover:bg-[#00e68f] text-slate-900 shadow-[0_0_15px_rgba(0,255,159,0.3)] hover:shadow-[0_0_25px_rgba(0,255,159,0.5)]'
+                : 'bg-[#00ff9f] hover:bg-[#00e68f] text-slate-900'
             }`}
           >
             <Play className="w-4 h-4 fill-current" />
@@ -82,7 +82,7 @@ export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, p
 
       {/* Footer text */}
       <div className="flex items-start gap-3 px-2">
-        <ShieldCheck className="w-5 h-5 text-[#00ff9f] mt-0.5 shrink-0" />
+        <ShieldCheck className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
         <p className="text-xs text-slate-500 leading-relaxed">
           Your agent is working 24/7 to keep your feed fresh and engaging.
         </p>

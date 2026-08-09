@@ -146,7 +146,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] transition-colors duration-300 font-sans text-slate-100 selection:bg-[#00ff9f]/30">
+    <div className="min-h-screen bg-[#0a0a0a] transition-colors duration-300 font-sans text-slate-100 selection:bg-white/10">
       <Navbar isAgentRunning={isAgentRunning} />
       
       <main className="w-full flex flex-col items-center px-4 pb-20">
