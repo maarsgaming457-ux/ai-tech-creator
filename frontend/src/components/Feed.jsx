@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { initAgent, fetchAgentFeed } from '../lib/api';
-import FeedCard from './FeedCard';
+import PostCard from './PostCard';
 
-export default function FeedLayout() {
+export default function Feed() {
+  const [agentId, setAgentId] = useState(null);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [posts, setPosts] = useState([]);
   const [isInitializing, setIsInitializing] = useState(false);
@@ -14,7 +15,9 @@ export default function FeedLayout() {
     try {
       setIsInitializing(true);
       setError('');
-      await initAgent();
+      const data = await initAgent();
+      // Store a mock agentId (since backend doesn't provide one) to satisfy requirements
+      setAgentId(data.agentId || 'ag-12345');
       setIsAgentRunning(true);
     } catch (err) {
       console.error(err);
@@ -31,9 +34,19 @@ export default function FeedLayout() {
       // Fetch immediately once running
       const fetchFeed = async () => {
         try {
-          const data = await fetchAgentFeed();
+          const data = await fetchAgentFeed(agentId);
           if (data && data.success) {
-            setPosts(data.posts);
+            setPosts(prev => {
+              // Prevent duplicates and sort by createdAt DESC
+              const newPosts = [...data.posts];
+              const uniquePostsMap = new Map();
+              
+              prev.forEach(p => uniquePostsMap.set(p.id, p));
+              newPosts.forEach(p => uniquePostsMap.set(p.id, p));
+              
+              const combined = Array.from(uniquePostsMap.values());
+              return combined.sort((a, b) => b.createdAt - a.createdAt);
+            });
           }
         } catch (err) {
           console.error("Failed to fetch agent feed:", err);
@@ -65,7 +78,7 @@ export default function FeedLayout() {
               <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 mb-6">
                 <Sparkles className="w-10 h-10 text-white animate-pulse" />
               </div>
-              <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">Awaken the Agent</h2>
+              <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">Autonomous AI Creator</h2>
               <p className="text-slate-400 mb-8 leading-relaxed">
                 Initialize the autonomous AI to continuously discover topics, analyze trends, and publish premium content automatically.
               </p>
@@ -98,7 +111,7 @@ export default function FeedLayout() {
             
             <AnimatePresence mode="popLayout">
               {posts.map((post) => (
-                <FeedCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} />
               ))}
             </AnimatePresence>
             

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Sidebar from './components/Sidebar'
-import FeedLayout from './components/FeedLayout'
+import Feed from './components/Feed'
 
 function App() {
   const [darkMode, setDarkMode] = useState(true)
@@ -19,7 +19,7 @@ function App() {
       <Sidebar onNewChat={handleNewChat} />
       
       <main className="flex-grow overflow-hidden relative z-10 flex flex-col items-center">
-        <FeedLayout key={resetKey} />
+        <Feed key={resetKey} />
       </main>
     </div>
   )
