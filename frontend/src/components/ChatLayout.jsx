@@ -125,21 +125,29 @@ export default function ChatLayout() {
             <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">How can I help you today?</h2>
           </div>
         ) : (
-          <div className="w-full max-w-4xl mx-auto py-8 px-4 flex flex-col gap-6">
+          <div className="w-full max-w-[800px] mx-auto py-10 px-4 flex flex-col gap-6">
             {messages.map((msg, idx) => (
               <MessageBubble key={idx} message={msg} />
             ))}
             
             {isGenerating && (
-              <div className="flex gap-4 p-4 md:p-6 group">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mt-1 border border-primary/20">
-                  <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex gap-4 p-5 group rounded-[20px] max-w-[85%] bg-white/5 backdrop-blur-xl border border-white/10 self-start shadow-xl"
+              >
+                <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-1 border bg-purple-600/20 text-purple-400 border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+                  <Sparkles className="w-5 h-5 animate-pulse" />
                 </div>
-                <div className="flex items-center text-slate-500 text-sm font-medium gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Thinking...
+                <div className="flex items-center text-slate-300 text-sm font-medium gap-2">
+                  <span>AI is thinking</span>
+                  <span className="flex gap-1">
+                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0 }}>.</motion.span>
+                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}>.</motion.span>
+                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.4 }}>.</motion.span>
+                  </span>
                 </div>
-              </div>
+              </motion.div>
             )}
             
             {/* Bottom padding to prevent last message from hiding behind input bar */}
@@ -149,13 +157,15 @@ export default function ChatLayout() {
       </div>
 
       {/* Sticky Input Bar at Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-slate-950 dark:via-slate-950 pt-10 pb-4 px-4">
-        <InputBar 
-          input={input} 
-          setInput={setInput} 
-          isGenerating={isGenerating} 
-          handleSend={handleSend} 
-        />
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent pt-12 pb-6 px-4 pointer-events-none">
+        <div className="pointer-events-auto">
+          <InputBar 
+            input={input} 
+            setInput={setInput} 
+            isGenerating={isGenerating} 
+            handleSend={handleSend} 
+          />
+        </div>
       </div>
     </div>
   )

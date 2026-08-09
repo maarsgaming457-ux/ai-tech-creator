@@ -39,15 +39,15 @@ export default function MessageBubble({ message }) {
       initial={{ opacity: 0, y: 10, x: isAi ? -10 : 10 }}
       animate={{ opacity: 1, y: 0, x: 0 }}
       className={clsx(
-        "flex gap-4 p-4 md:p-6 group rounded-2xl max-w-[85%]",
-        isAi ? "bg-slate-50 dark:bg-[#15151A]/80 border border-border/40 self-start shadow-sm" : "bg-primary text-primary-foreground self-end shadow-md shadow-primary/20 flex-row-reverse"
+        "flex gap-4 p-5 group rounded-[20px] max-w-[85%]",
+        isAi ? "bg-white/5 backdrop-blur-xl border border-white/10 self-start shadow-xl" : "bg-gradient-to-br from-blue-500 to-indigo-600 text-white self-end shadow-lg shadow-blue-500/20 flex-row-reverse"
       )}
     >
       <div className={clsx(
         "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-1 border",
         isAi 
-          ? "bg-purple-500/10 text-purple-500 border-purple-500/20" 
-          : "bg-white/20 text-white border-white/20"
+          ? "bg-purple-600/20 text-purple-400 border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.2)]" 
+          : "bg-white/20 text-white border-white/20 shadow-sm"
       )}>
         {isAi ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
       </div>
@@ -58,7 +58,7 @@ export default function MessageBubble({ message }) {
         </div>
         
         {isAi ? (
-          <div className="prose prose-slate dark:prose-invert prose-p:leading-relaxed prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10 max-w-none text-slate-800 dark:text-slate-200">
+          <div className="prose prose-invert prose-p:leading-relaxed prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10 max-w-none text-slate-200">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {displayedContent + (isAi && message.isNew && displayedContent.length < message.content.length ? '...' : '')}
             </ReactMarkdown>

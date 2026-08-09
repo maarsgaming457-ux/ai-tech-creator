@@ -70,13 +70,29 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-primary/30 selection:text-primary;
-  }
   
-  .dark body {
-    @apply bg-[#000000] text-slate-100;
+  body {
+    @apply text-slate-100 antialiased selection:bg-purple-500/30 selection:text-purple-200;
+    background: linear-gradient(135deg, #0A0F24 0%, #1D0F35 50%, #000000 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
+}
+
+/* Custom Thin Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .glass-panel {
