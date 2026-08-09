@@ -41,11 +41,13 @@ export default function ChatLayout() {
       // In ChatGPT style, we just pass the prompt. We'll map it to the expected schema.
       const data = await generatePost("general", userPrompt)
       
-      if (!data.success) {
-        throw new Error(data.error || "Failed to generate post")
+      // If the backend wraps in { success: true }, check it. Otherwise assume success if no throw.
+      if (data.success === false) {
+        throw new Error(data.error || data.message || "Failed to generate post")
       }
       
-      let aiContent = typeof data.data === 'string' ? data.data : (data.data?.post || "Generated successfully.")
+      // The backend returns { success: true, post: "..." } or { data: { post: "..." } }
+      let aiContent = data.post || data.data?.post || (typeof data.data === 'string' ? data.data : null) || "Generated successfully."
       
       setMessages(prev => [...prev, { role: 'ai', content: aiContent, isNew: true }])
     } catch (err) {
@@ -93,14 +95,14 @@ export default function ChatLayout() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/5"
+              className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/20"
             >
               <Sparkles className="w-10 h-10 text-primary" />
             </motion.div>
-            <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200">How can I help you today?</h2>
+            <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">How can I help you today?</h2>
           </div>
         ) : (
-          <div className="w-full max-w-3xl mx-auto py-8 flex flex-col gap-2">
+          <div className="w-full max-w-4xl mx-auto py-8 px-4 flex flex-col gap-6">
             {messages.map((msg, idx) => (
               <MessageBubble key={idx} message={msg} />
             ))}

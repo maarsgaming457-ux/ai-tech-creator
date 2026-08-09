@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bodyData = { category };
             if (series_topic) bodyData.series_topic = series_topic;
 
-            const data = await apiCall('/api/generate-post', {
+            const data = await apiCall('/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyData)

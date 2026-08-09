@@ -1,44 +1,54 @@
-import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://ai-tech-creator.onrender.com';
 
-const BASE_URL = 'https://ai-tech-creator-1.onrender.com';
-
-const api = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  timeout: 30000 // 30s timeout
-});
-
-export const generatePost = async (category, topic) => {
-  const endpoint = '/api/generate-post';
+export const generatePost = async (category, userMessage) => {
+  const url = `${API_URL}/api/generate`;
+  
   const payload = {
     category: category || "general",
-    series_topic: topic
+    series_topic: userMessage
   };
   
-  console.log(`[API REQUEST] POST ${BASE_URL}${endpoint}`);
+  console.log(`[API REQUEST] POST ${url}`);
   console.log(`[API PAYLOAD]`, payload);
   
   try {
-    const response = await api.post(endpoint, payload);
-    console.log(`[API RESPONSE] Success:`, response.data);
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
     
-    if (!response.data) {
+    // Check if response is empty
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        errorData = { error: 'Unknown server error' };
+      }
+      console.error(`[API ERROR] Response not ok:`, errorData);
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(`[API RESPONSE] Success:`, data);
+    
+    if (!data) {
       throw new Error("No response generated from the server.");
     }
     
-    return response.data;
+    return data;
+    
   } catch (error) {
-    console.error(`[API ERROR]`, error.message);
-    if (error.response) {
-      console.error(`[API ERROR DATA]`, error.response.data);
-    } else if (error.request) {
+    // Check for network errors (e.g. server is down or CORS blocked)
+    if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
       console.error(`[API ERROR NETWORK] Server not reachable`);
       throw new Error("Server not reachable. Please check your internet connection or try again later.");
     }
-    throw error;
+    
+    console.error(`[API ERROR]`, error.message);
+    throw new Error(error.message || "Something went wrong");
   }
 };
-
-export default api;

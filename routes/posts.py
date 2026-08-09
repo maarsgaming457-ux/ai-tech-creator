@@ -74,7 +74,7 @@ async def onboard_user(req: OnboardRequest, request: Request, current_user: int 
     mark_onboarded(current_user)
     return success_response(message="Onboarded successfully")
 
-@router.post("/generate-post")
+@router.post("/generate")
 # To enable auth again: add Depends(get_current_user)
 async def generate(req: GenerateRequest, request: Request, current_user: int = 1):
     print("API HIT:", request.url.path)

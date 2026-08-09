@@ -71,8 +71,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-primary/30 selection:text-primary;
+  }
+  
+  .dark body {
+    @apply bg-[#000000] text-slate-100;
   }
 }
 

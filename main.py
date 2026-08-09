@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import your modules
-from routes import auth, posts, background, upload
+from routes import auth, background, upload
+from routes.posts import router as posts_router
 from services.db_service import init_db
 from utils.rate_limit import RateLimiter
 
@@ -20,8 +21,12 @@ app = FastAPI(title="AI Tech Creator (Production Ready)")
 # ✅ ---------------- CORS FIX (IMPORTANT) ----------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TEMP: allow all (fixes your error instantly)
-    allow_credentials=False,  # MUST be False when "*" is used
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://ai-tech-creator-1.vercel.app" # Placeholder for production vercel domain
+    ],
+    allow_credentials=True, 
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -42,19 +47,15 @@ def on_startup():
 
 # Routers
 app.include_router(auth.router)
-app.include_router(posts.router, prefix="/api")
+app.include_router(posts_router, prefix="/api")
 app.include_router(background.router, prefix="/api")
 app.include_router(upload.router, prefix="/api")
 
 # Root route (serves frontend)
+# Root route (debug test)
 @app.get("/")
-async def serve_frontend(request: Request):
-    print("Serving frontend index.html")
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={"launch_mode": True}
-    )
+def root():
+    return {"message": "Backend is running"}
 
 # Health check
 @app.get("/ping")
