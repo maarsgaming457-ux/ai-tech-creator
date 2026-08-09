@@ -35,17 +35,17 @@ export default function Feed() {
       const fetchFeed = async () => {
         try {
           const data = await fetchAgentFeed(agentId);
-          if (data && data.success) {
+          if (data && data.success && data.posts) {
             setPosts(prev => {
-              // Prevent duplicates and sort by createdAt DESC
-              const newPosts = [...data.posts];
-              const uniquePostsMap = new Map();
+              const existingIds = new Set(prev.map(p => p.id));
+              const newPosts = data.posts.filter(p => !existingIds.has(p.id));
               
-              prev.forEach(p => uniquePostsMap.set(p.id, p));
-              newPosts.forEach(p => uniquePostsMap.set(p.id, p));
+              const merged = [...newPosts, ...prev];
               
-              const combined = Array.from(uniquePostsMap.values());
-              return combined.sort((a, b) => b.createdAt - a.createdAt);
+              // Backend createdAt is a unix timestamp in seconds
+              return merged.sort(
+                (a, b) => new Date(b.createdAt * 1000) - new Date(a.createdAt * 1000)
+              );
             });
           }
         } catch (err) {
@@ -55,14 +55,14 @@ export default function Feed() {
       
       fetchFeed();
       
-      // Then poll every 5 seconds
-      intervalId = setInterval(fetchFeed, 5000);
+      // Then poll every 60 seconds (60000ms) to prevent API exhaustion
+      intervalId = setInterval(fetchFeed, 60000);
     }
     
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isAgentRunning]);
+  }, [isAgentRunning, agentId]);
 
   return (
     <div className="w-full h-full flex flex-col relative">
