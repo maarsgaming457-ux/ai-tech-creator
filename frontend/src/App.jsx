@@ -37,11 +37,23 @@ function App() {
           setPosts(prev => {
             const existingIds = new Set(prev.map(p => p.id));
             
+            const generateTags = (topicStr) => {
+              const safeTopic = topicStr || "technology";
+              return [
+                `#${safeTopic.replace(/\\s+/g, '')}`,
+                "#Innovation",
+                "#Career",
+                "#Technology"
+              ];
+            };
+            
             // Validate data structure and prevent crashes
             const newPosts = data.map(p => ({
               ...p,
               id: p.id || `temp-${Date.now()}-${Math.random()}`,
               post: p.post || "⚠️ No content generated",
+              topic: p.topic || "technology",
+              tags: p.tags || generateTags(p.topic),
               createdAt: p.createdAt || (Date.now() / 1000)
             })).filter(p => !existingIds.has(p.id));
             

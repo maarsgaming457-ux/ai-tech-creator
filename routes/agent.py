@@ -37,16 +37,17 @@ async def post_generation(topic):
     """Generate a structured 6-line post based on the topic using Mistral."""
     
     prompt = f"""
-Generate a LinkedIn-style post STRICTLY about: {topic}
+Write a high-quality LinkedIn-style post about: {topic}
 
-Rules:
-- Must be about the given topic only
-- No generic AI content
-- 5 to 6 lines
-- Each line on new line
-- Simple and engaging language
+Requirements:
+- Focus strictly on the topic
+- 5 to 6 meaningful lines
+- Each line on a new line
+- Human-like tone (not robotic)
+- Professional and engaging
 - No hashtags
-- No extra explanation
+- No generic filler sentences
+- Add real-world relevance if possible
 """
     
     content = ""
@@ -78,7 +79,11 @@ Rules:
     
     # HANDLE EMPTY RESPONSE (IMPORTANT)
     if not content or len(content) < 20:
-        content = f"{topic} is rapidly evolving in today's world.\nIt is creating new opportunities and innovations.\nStudents and professionals must stay updated.\nPractical skills are becoming more important.\nThe future of {topic} is very promising."
+        content = f"""{topic.title()} is transforming industries at a rapid pace.
+It plays a crucial role in innovation and real-world problem solving.
+Students and professionals must focus on practical skills.
+Hands-on projects are key to mastering this field.
+The future of {topic} holds immense opportunities."""
         
     print("FINAL TOPIC:", topic)
     print("FINAL POST:", content)
