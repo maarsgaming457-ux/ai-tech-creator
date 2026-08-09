@@ -1,3 +1,4 @@
+import os
 import asyncio
 import time
 import uuid
@@ -7,8 +8,52 @@ from pydantic import BaseModel
 import re
 from ai_tech_creator.post_generator import generate_post
 from services.db_service import save_user_post
+from tavily import TavilyClient
 
 router = APIRouter(tags=["agent"])
+
+tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+
+# --- Cache ---
+tavily_cache = {}
+
+def get_latest_context(topic):
+    try:
+        response = tavily.search(
+            query=topic,
+            max_results=2,              # LIMIT results (cost saving)
+            search_depth="basic",       # cheaper than advanced
+            include_answer=True,        # short summary
+            include_raw_content=False,  # avoid large data
+            topic="news",               # focus on latest
+            time_range="hour"           # latest events only
+        )
+
+        # Extract only useful text
+        answer = response.get("answer", "")
+        results = response.get("results", [])
+
+        snippets = " ".join([r.get("content", "") for r in results])
+
+        # FINAL SMALL CONTEXT
+        context = f"{answer}\\n{snippets}"
+
+        return context[:1000]  # HARD LIMIT (token control)
+
+    except Exception as e:
+        print("Tavily error:", e)
+        return ""
+
+def get_cached_context(topic):
+    if topic in tavily_cache:
+        return tavily_cache[topic]
+    
+    context = get_latest_context(topic)
+    if not context:
+        context = "General knowledge about the topic"
+        
+    tavily_cache[topic] = context
+    return context
 
 # --- In-Memory State ---
 AGENT_POSTS = []
@@ -55,7 +100,7 @@ def editorial_filtering(topic):
     return True
 
 async def post_generation(topic):
-    """Generate a structured 6-line post based on the topic using Mistral."""
+    """Generate a structured post based on the topic using Mistral."""
     
     recent_texts = [p["post"] for p in AGENT_POSTS[:5]]
     avoidance_context = "\\n".join([f"- {text[:100]}..." for text in recent_texts]) if recent_texts else "None"
@@ -63,6 +108,9 @@ async def post_generation(topic):
     chosen_style = random.choice(STYLES)
     chosen_hook = random.choice(HOOKS)
     chosen_platform = random.choice(PLATFORMS)
+    tone = random.choice(["bold", "storytelling", "controversial", "minimal"])
+    
+    context = get_latest_context(topic) + f"\\nVariation seed: {random.randint(1,100000)}"
     
     prompt = f"""
 You are a top-tier AI Viral Content Engine.
@@ -70,9 +118,24 @@ Your task is to write a scroll-stopping post for: {chosen_platform}
 Topic: {topic}
 Style: {chosen_style}
 Hook Strategy: {chosen_hook}
+Tone: {tone}
+
+LATEST REAL-WORLD INFORMATION:
+Use the following context to ensure the post is highly relevant and up-to-date:
+{context}
 
 CRITICAL INSTRUCTION TO PREVENT REPETITION:
-You MUST NOT generate a post that sounds similar to these recently generated posts:
+You MUST generate a COMPLETELY DIFFERENT post.
+Use a new angle, new hook, new structure.
+
+Strictly avoid:
+- Similar opening line
+- Same examples
+- Same sentence patterns
+
+If similar → REWRITE COMPLETELY.
+
+Recently generated posts:
 {avoidance_context}
 
 PROCESS:
@@ -109,6 +172,17 @@ CONTENT REQUIREMENTS:
             content = result
             
             if is_valid(content):
+                # Force unique output check
+                # Note: content contains <thinking> tags, so we strip them for the check
+                clean_content = content
+                if "<thinking>" in clean_content and "</thinking>" in clean_content:
+                    clean_content = re.sub(r'<thinking>.*?</thinking>', '', clean_content, flags=re.DOTALL).strip()
+                
+                if clean_content in recent_texts:
+                    print("Duplicate detected → regenerating...")
+                    attempts += 1
+                    continue
+                
                 break
                 
             print("Regenerating invalid output...")
@@ -134,9 +208,6 @@ The future of {topic} holds immense opportunities."""
         
     print("FINAL TOPIC:", topic)
     print("FINAL POST:", content)
-    
-    # Force line breaks failsafe if model ignores formatting
-    content = content.replace(". ", ".\\n")
     
     post_text = f"[{chosen_platform}]\\n\\n{content.strip()}"
     
@@ -190,8 +261,8 @@ async def agent_loop():
             if len(AGENT_POSTS) > 100:
                 AGENT_POSTS.pop()
         
-        # 4. Sleep for 2 hours (7200 seconds) for real SaaS scheduling
-        await asyncio.sleep(7200)
+        # 4. Sleep for 45 seconds
+        await asyncio.sleep(45)
 
 @router.post("/agent/init")
 async def init_agent(req: InitRequest, background_tasks: BackgroundTasks):
@@ -231,9 +302,17 @@ async def stop_agent():
 @router.post("/agent/generate")
 async def manual_generate(req: InitRequest):
     topic = req.topic.strip() if req.topic else "technology"
-    post = await post_generation(topic)
+    
+    async def bg_generate():
+        post = await post_generation(topic)
+        AGENT_POSTS.insert(0, post)
+        if len(AGENT_POSTS) > 100:
+            AGENT_POSTS.pop()
+            
+    asyncio.create_task(bg_generate())
+    
     return {
         "success": True,
-        "post": post["post"],
-        "topic": post["topic"]
+        "post": f"🔥 Generating viral content on {topic}...",
+        "topic": topic
     }
