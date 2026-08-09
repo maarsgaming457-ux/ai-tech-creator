@@ -4,11 +4,11 @@ import { Play, Pause, Cpu, ShieldCheck } from 'lucide-react';
 export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, postsTodayCount }) {
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="w-full rounded-2xl border border-[#1f1f1f] bg-[#0f0f0f] p-6 shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
+      <div className="glass-panel w-full rounded-2xl p-6">
         
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#1f1f1f]">
-          <div className="w-8 h-8 rounded-lg bg-[#0a0a0a] border border-[#1f1f1f] flex items-center justify-center">
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+          <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] flex items-center justify-center">
             <Cpu className="w-4 h-4 text-white" />
           </div>
           <div>
@@ -47,7 +47,7 @@ export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, p
           </div>
         </div>
         
-        <div className="h-[1px] w-full bg-[#1f1f1f] mb-6" />
+        <div className="h-[1px] w-full bg-white/10 mb-6" />
 
         {/* Controls */}
         <div className="flex flex-col gap-3">

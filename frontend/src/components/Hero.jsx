@@ -8,7 +8,7 @@ export default function Hero({ onRunAgent, isInitializing, topic, setTopic }) {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl border border-[#1f1f1f] bg-[#0f0f0f] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between shadow-[0_2px_6px_rgba(0,0,0,0.3)]"
+        className="glass-card relative overflow-hidden rounded-2xl p-10 md:p-14 flex flex-col md:flex-row items-center justify-between"
       >
         {/* Background glow effects - Removed for minimal theme */}
 
@@ -26,7 +26,7 @@ export default function Hero({ onRunAgent, isInitializing, topic, setTopic }) {
           
           <div className="flex flex-col gap-4">
             {/* Topic Input Box */}
-            <div className="flex items-center gap-3 bg-[#111111] border border-[#1f1f1f] rounded-xl px-4 py-3 w-full max-w-sm focus-within:border-slate-500 transition-all">
+            <div className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-xl px-4 py-3 w-full max-w-sm focus-within:border-white/30 shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] transition-all">
               <Target className="w-5 h-5 text-slate-400" />
               <input 
                 type="text" 
@@ -65,10 +65,24 @@ export default function Hero({ onRunAgent, isInitializing, topic, setTopic }) {
         {/* Right: Visual Element */}
         <div className="hidden md:flex z-10 w-1/3 justify-end items-center relative">
           <div className="relative w-40 h-40">
-            {/* Minimalist Center Icon */}
+            {/* Orbiting Rings */}
+            <div className="absolute inset-[-40px] border border-white/10 rounded-full animate-[spin_12s_linear_infinite]" style={{ transform: "rotateX(70deg)" }}></div>
+            <div className="absolute inset-[-20px] border border-white/5 rounded-full animate-[spin_10s_linear_infinite_reverse]" style={{ transform: "rotateY(60deg)" }}></div>
+            
+            {/* Small Floating Stars */}
+            <div className="absolute -top-4 -left-4 animate-pulse">
+              <div className="w-2 h-2 bg-white/60 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+            </div>
+            <div className="absolute bottom-4 -right-8 animate-pulse" style={{ animationDelay: '1s' }}>
+              <div className="w-1.5 h-1.5 bg-white/40 rounded-full shadow-[0_0_5px_rgba(255,255,255,0.5)]"></div>
+            </div>
+            
+            {/* 3D Center Icon */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-20 h-20 bg-[#111111] rounded-2xl border border-[#1f1f1f] flex items-center justify-center transform -rotate-12 hover:rotate-0 transition-transform duration-500">
-                <span className="text-3xl font-black text-white tracking-tighter">AI</span>
+              <div className="w-32 h-32 bg-gradient-to-br from-[#2a2a2a] to-[#0a0a0a] rounded-[2rem] border border-white/20 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(255,255,255,0.2),_0_15px_35px_rgba(0,0,0,0.8)] transform hover:scale-105 hover:-rotate-3 transition-transform duration-500">
+                <svg className="w-16 h-16 text-slate-200 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
+                </svg>
               </div>
             </div>
           </div>

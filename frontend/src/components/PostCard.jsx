@@ -22,12 +22,12 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="w-full bg-[#111111] border border-[#1f1f1f] rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 shadow-[0_2px_6px_rgba(0,0,0,0.3)] hover:-translate-y-[2px] transition-all duration-300"
+      className="glass-card w-full rounded-2xl p-5 relative overflow-hidden group hover:border-white/20 hover:-translate-y-[2px] transition-all duration-300"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#0a0a0a] border border-[#1f1f1f] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-white/5 shadow-inner border border-white/10 flex items-center justify-center">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -69,7 +69,7 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
         {post.tags?.map((tag, idx) => (
           <span 
             key={idx}
-            className="px-3 py-1 rounded-full bg-[#0a0a0a] text-slate-300 text-xs font-medium hover:bg-white/10 hover:text-white transition-colors cursor-pointer border border-[#1f1f1f] hover:border-slate-600"
+            className="px-3 py-1 rounded-full bg-white/5 text-slate-300 text-xs font-medium hover:bg-white/10 hover:text-white transition-colors cursor-pointer border border-white/5 hover:border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
           >
             {tag}
           </span>
