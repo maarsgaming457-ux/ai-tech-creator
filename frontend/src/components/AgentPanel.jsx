@@ -4,7 +4,7 @@ import { Play, Pause, Cpu, ShieldCheck } from 'lucide-react';
 export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, postsTodayCount }) {
   return (
     <div className="w-full flex flex-col gap-6">
-      <div className="w-full rounded-2xl border border-[#1f1f1f] bg-[#111111] p-6">
+      <div className="w-full rounded-2xl border border-[#1f1f1f] bg-[#0f0f0f] p-6 shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
         
         {/* Header */}
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#1f1f1f]">

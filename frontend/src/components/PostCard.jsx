@@ -22,7 +22,7 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="w-full bg-[#111111] border border-[#1f1f1f] rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 transition-all"
+      className="w-full bg-[#111111] border border-[#1f1f1f] rounded-2xl p-5 relative overflow-hidden group hover:border-slate-700 shadow-[0_2px_6px_rgba(0,0,0,0.3)] hover:-translate-y-[2px] transition-all duration-300"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -58,15 +58,14 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="mb-4 text-slate-200 text-[15px] leading-relaxed">
+      <div className="mb-4 text-slate-200 text-base leading-[1.7]">
         <div style={{ whiteSpace: "pre-line" }}>
           {post.post}
         </div>
       </div>
 
       {/* Dynamic Tags */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2.5 mt-2">
         {post.tags?.map((tag, idx) => (
           <span 
             key={idx}

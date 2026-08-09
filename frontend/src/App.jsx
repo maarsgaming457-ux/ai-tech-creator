@@ -158,7 +158,7 @@ function App() {
         />
         
         {/* Main Dashboard Layout */}
-        <div className="w-full max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="w-full max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Left Column: Live Feed (Takes 8 columns on large screens) */}
           <div className="lg:col-span-8">

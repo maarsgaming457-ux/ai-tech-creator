@@ -4,11 +4,11 @@ import { Zap, Eye, Target } from 'lucide-react';
 
 export default function Hero({ onRunAgent, isInitializing, topic, setTopic }) {
   return (
-    <div className="w-full max-w-[1200px] mx-auto mt-8 mb-8">
+    <div className="w-full max-w-[1200px] mx-auto mt-8 mb-8 pb-8 border-b border-[#1f1f1f]">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-10 md:p-14 flex flex-col md:flex-row items-center justify-between"
+        className="relative overflow-hidden rounded-2xl border border-[#1f1f1f] bg-[#0f0f0f] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between shadow-[0_2px_6px_rgba(0,0,0,0.3)]"
       >
         {/* Background glow effects - Removed for minimal theme */}
 
