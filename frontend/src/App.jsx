@@ -10,89 +10,113 @@ function App() {
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [topic, setTopic] = useState("");
+  const [countdown, setCountdown] = useState(45);
 
   // Initialize Theme
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
 
-  // Main Polling Loop
+  // Countdown and Fetch Loop
   useEffect(() => {
-    let intervalId;
-    
+    let timer;
     if (isAgentRunning) {
-      const fetchFeed = async () => {
-        try {
-          const result = await fetchAgentFeed(agentId);
-          console.log("API RESPONSE:", result);
-          
-          if (!result || !result.success) {
-            throw new Error("API returned failure");
+      timer = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            // Time to fetch/generate
+            fetchAgentFeed(agentId).then(result => {
+              if (result && result.success && result.posts) {
+                const data = result.posts || [];
+                setPosts(currentPosts => {
+                  const existingIds = new Set(currentPosts.map(p => p.id));
+                  
+                  const generateTags = (topicStr) => {
+                    const safeTopic = topicStr || "technology";
+                    return [
+                      `#${safeTopic.replace(/\\s+/g, '')}`,
+                      "#Innovation",
+                      "#Career",
+                      "#Technology"
+                    ];
+                  };
+                  
+                  const newPosts = data.map(p => ({
+                    ...p,
+                    id: p.id || `temp-${Date.now()}-${Math.random()}`,
+                    post: p.post || "⚠️ No content generated",
+                    topic: p.topic || "technology",
+                    tags: p.tags || generateTags(p.topic),
+                    createdAt: p.createdAt || (Date.now() / 1000)
+                  })).filter(p => !existingIds.has(p.id));
+                  
+                  const merged = [...newPosts, ...currentPosts];
+                  return merged.sort((a, b) => b.createdAt - a.createdAt).slice(0, 50);
+                });
+              }
+            }).catch(err => console.error("FEED ERROR:", err));
+            return 45; // reset countdown
           }
-          
-          const data = result.posts || [];
-          
-          setPosts(prev => {
-            const existingIds = new Set(prev.map(p => p.id));
-            
-            const generateTags = (topicStr) => {
-              const safeTopic = topicStr || "technology";
-              return [
-                `#${safeTopic.replace(/\\s+/g, '')}`,
-                "#Innovation",
-                "#Career",
-                "#Technology"
-              ];
-            };
-            
-            // Validate data structure and prevent crashes
-            const newPosts = data.map(p => ({
-              ...p,
-              id: p.id || `temp-${Date.now()}-${Math.random()}`,
-              post: p.post || "⚠️ No content generated",
-              topic: p.topic || "technology",
-              tags: p.tags || generateTags(p.topic),
-              createdAt: p.createdAt || (Date.now() / 1000)
-            })).filter(p => !existingIds.has(p.id));
-            
-            const merged = [...newPosts, ...prev];
-            
-            return merged.sort(
-              (a, b) => new Date(b.createdAt * 1000) - new Date(a.createdAt * 1000)
-            ).slice(0, 50);
-          });
-        } catch (err) {
-          console.error("FEED ERROR:", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      
-      fetchFeed(); // Immediate fetch
-      
-      // Poll every 60 seconds
-      intervalId = setInterval(fetchFeed, 60000);
+          return prev - 1;
+        });
+      }, 1000);
     }
     
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (timer) clearInterval(timer);
     };
   }, [isAgentRunning, agentId]);
+
+  const generateImmediatePost = async (targetTopic) => {
+    try {
+      const API = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
+      const res = await fetch(`${API}/api/agent/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: targetTopic })
+      });
+      const data = await res.json();
+      
+      const generateTags = (topicStr) => {
+        const safeTopic = topicStr || "technology";
+        return [`#${safeTopic.replace(/\\s+/g, '')}`, "#Innovation", "#Career", "#Technology"];
+      };
+
+      const newPost = {
+        id: `temp-${Date.now()}-${Math.random()}`,
+        topic: data.topic,
+        post: data.post,
+        tags: generateTags(data.topic),
+        createdAt: Date.now() / 1000
+      };
+
+      setPosts(prev => [newPost, ...prev]);
+    } catch (error) {
+      console.error("Immediate generation error:", error);
+    }
+  };
 
   const handleRunAgent = async () => {
     try {
       setIsGenerating(true);
+      setLoading(true);
       const data = await initAgent(topic);
       setAgentId(data.agentId || 'ag-12345');
+      
+      // 1. Generate first post immediately
+      await generateImmediatePost(topic);
+      
+      // 2. Start loop
+      setCountdown(45);
       setIsAgentRunning(true);
-      setLoading(true);
     } catch (err) {
       console.error(err);
       alert('Failed to connect to backend. Check server.');
     } finally {
       setIsGenerating(false);
+      setLoading(false);
     }
   };
 
@@ -178,6 +202,7 @@ function App() {
                 onRunAgent={handleRunAgent}
                 onPauseAgent={handlePauseAgent}
                 postsTodayCount={posts.length}
+                countdown={countdown}
               />
             </div>
           </div>

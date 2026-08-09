@@ -45,7 +45,7 @@ Requirements:
 - Each line on a new line
 - Human-like tone (not robotic)
 - Professional and engaging
-- No hashtags
+- Include 3 to 4 relevant hashtags at the very end
 - No generic filler sentences
 - Add real-world relevance if possible
 """

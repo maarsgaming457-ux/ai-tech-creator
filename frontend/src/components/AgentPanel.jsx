@@ -1,7 +1,7 @@
 import React from 'react';
 import { Play, Pause, Cpu, ShieldCheck } from 'lucide-react';
 
-export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, postsTodayCount }) {
+export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, postsTodayCount, countdown }) {
   return (
     <div className="w-full flex flex-col gap-6">
       <div className="glass-panel w-full rounded-2xl p-6">
@@ -37,7 +37,7 @@ export default function AgentPanel({ isAgentRunning, onRunAgent, onPauseAgent, p
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-400">Next Run</span>
             <span className="text-sm font-semibold text-white">
-              {isAgentRunning ? '00:00:45' : '--:--:--'}
+              {isAgentRunning ? `00:00:${countdown.toString().padStart(2, '0')}` : '--:--:--'}
             </span>
           </div>
 
