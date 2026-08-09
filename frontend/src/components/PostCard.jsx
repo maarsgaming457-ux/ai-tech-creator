@@ -59,10 +59,8 @@ export default function PostCard({ post, regeneratePost, isRegenerating }) {
       </div>
 
       <div className="mb-4 text-slate-200 text-base leading-[1.7]">
-        <div className="whitespace-pre-line">
-          {post.post.split(/\\n|\n/).map((line, i) => (
-            <p key={i} className="min-h-[1.5rem]">{line}</p>
-          ))}
+        <div className="post-text">
+          {post.post}
         </div>
       </div>
 
