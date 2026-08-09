@@ -366,6 +366,8 @@ async def manual_generate(req: InitRequest):
     # 2. Extract the actual content string from the post object
     content = post.get("post", "").strip()
     
+    print("FINAL OUTPUT:", content)
+    
     # 3. Return the exact payload expected by frontend (and support requested structure)
     return {
         "success": True,
